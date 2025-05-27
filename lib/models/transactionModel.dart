@@ -6,7 +6,7 @@ import 'package:vi_nho/core/db_constants.dart';
 class TransactionModel{
   int? id;
   String type;
-  Double amount;
+  double amount;
   String category;
   String? note;
   DateTime dateTime;
@@ -16,7 +16,7 @@ class TransactionModel{
       required this.type,
       required this.amount,
       required this.category,
-      this.note,
+      this.note = '...',
       required this.dateTime});
 
   Map<String, dynamic> toMap() => {
@@ -32,11 +32,13 @@ class TransactionModel{
     return TransactionModel(
         id: transaction[DBConstants.columnId] as int?,
         type: transaction[DBConstants.columnType] as String,
-        amount: transaction[DBConstants.columnAmount] as Double,
+        amount: transaction[DBConstants.columnAmount] as double,
         category: transaction[DBConstants.columnCategory] as String,
+        note: (transaction[DBConstants.columnNote]?.isEmpty ?? true) ? '...' : transaction[DBConstants.columnNote]!,
         dateTime: DateTime.parse(transaction[DBConstants.columnDateTime] as String)
     );
   }
 
   String get dateTimeString => DateFormat('dd/MM/yyyy').format(dateTime);
+
 }
