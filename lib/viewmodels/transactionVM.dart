@@ -5,9 +5,19 @@ import 'package:vi_nho/services/database.dart';
 class TransactionVM extends ChangeNotifier{
   bool isLoad = false;
   final _db = DatabaseService();
+  int? _activeItemId;
   final List<TransactionModel> _transactionList = [];
 
   final List<TransactionModel> transactionList = [];
+
+  void setActiveItem(int? id) {
+    _activeItemId = id;
+    notifyListeners();
+  }
+
+  bool isActive(int id) {
+    return _activeItemId == id;
+  }
 
   Future<void> initData() async{
     final data = await _db.selectAll();
