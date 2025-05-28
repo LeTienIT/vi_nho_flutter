@@ -46,6 +46,7 @@ class TransactionVM extends ChangeNotifier{
     if(indexPublic != -1){
       transactionList[indexPublic] = t;
     }
+    notifyListeners();
   }
 
   Future<void> deleteTransaction(int id) async{

@@ -73,7 +73,7 @@ class TransactionItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_forward, color: Colors.blue),
+                  icon: Icon(Icons.edit, color: Colors.blue),
                   onPressed: onDetailPressed,
                 ),
               ),
