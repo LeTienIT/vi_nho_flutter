@@ -50,8 +50,8 @@ class DatabaseService{
     return (await db).insert(DBConstants.tableTransaction, t.toMap());
   }
 
-  Future<int> update(TransactionModel t) async{
-    return (await db).update(DBConstants.tableTransaction, t.toMap(),where: 'id = ?',whereArgs: [t.id!]);
+  Future<int> update(TransactionModel t, int id) async{
+    return (await db).update(DBConstants.tableTransaction, t.toMap(),where: 'id = ?',whereArgs: [id]);
   }
 
   Future<int> delete(int id) async{

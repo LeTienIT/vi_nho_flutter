@@ -8,6 +8,13 @@ import 'package:vi_nho/models/transactionModel.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/sessionTitle.dart';
 
+import '../widgets/dateTimeInput.dart';
+import '../widgets/numberForm.dart';
+import '../widgets/textForm.dart';
+import '../widgets/typeSelector.dart';
+
+import 'package:vi_nho/core/input_validators.dart';
+
 class AddTransactionView extends StatefulWidget{
   @override
   State<StatefulWidget> createState() => _AddTransactionView();
@@ -20,6 +27,15 @@ class _AddTransactionView extends State<AddTransactionView>{
   final TextEditingController _amount = TextEditingController();
   final TextEditingController _note = TextEditingController();
   DateTime? dateTime;
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _category.dispose();
+    _amount.dispose();
+    _note.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,120 +56,26 @@ class _AddTransactionView extends State<AddTransactionView>{
                 Divider(),
 
                 SessionTitle(title: 'Kiểu', subtitle: 'Phân loại thu hay chi',),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      RadioListTile<String>(
-                          value: 'Thu',
-                          title: Text('Tiền vào'),
-                          groupValue: _type,
-                          onChanged: (value){
-                            setState(() {
-                              _type = value;
-                            });
-                          }),
-                      RadioListTile(
-                          value: 'Chi',
-                          title: Text('Tiền ra'),
-                          groupValue: _type,
-                          onChanged: (value){
-                            setState(() {
-                              _type = value;
-                            });
-                          }),
-                    ],
-                  ),
+                TypeSelector(
+                  selected: _type, //
+                  onChanged: (value) {
+                    setState(() {
+                      _type = value;
+                    });
+                  },
                 ),
 
                 SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      controller: _category,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Phân loại giao dịch'),
-                          hintText: 'VD: ăn uống, mua sắm, ...'
-                      ),
-                      validator: (value){
-                        if(value == null || value.isEmpty){
-                          return 'Hãy nhập giá trị';
-                        }
-                      },
-                    )
-                ),
+                TextForm(category: _category, title: 'Phân loại giao dịch', hint: 'VD: ăn uống, mua săm, ...', validator: InputValidators.categoryValidator),
 
                 SessionTitle(title: 'Số lượng', subtitle: 'Số tiền chi trả cho việc này',),
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                      controller: _amount,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Số tiền'),
-                          hintText: '2.000 vnđ'
-                      ),
-                      validator: (value){
-                        if(value == null || value.isEmpty){
-                          return 'Hãy nhập giá trị';
-                        }
-                        if(double.tryParse(value) == null){
-                          return 'Hãy nhập đúng định dạng số tiền';
-                        }
-                      },
-                    )
-                ),
+                NumberForm(amount: _amount, title: 'Số tiền', hint: 'VD: 20.000', validator: InputValidators.amountValidator,),
 
                 SessionTitle(title: 'Note',subtitle: 'Ghi chú để xem lại',),
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: TextField(
-                      controller: _note,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          label: Text('Ghi chú'),
-                          hintText: 'Một khoản nhỏ mua niềm vui của đứa trẻ'
-                      ),
-                    )
-                ),
+                TextForm(category: _note, title: 'Ghi chú', hint: 'ghi lại nhưng gì cần'),
 
                 SessionTitle(title: 'Thời gian',subtitle: 'Ngày thực hiện',),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Text(
-                        dateTime == null ? 'Chưa chọn ngày' : 'Ngày chọn: ${DateFormat('dd/MM/yyyy').format(dateTime!)}',
-                        style: TextStyle(
-                            color: dateTime == null ? Colors.grey : null,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      ElevatedButton.icon(
-                        icon: Icon(Icons.calendar_today),
-                        label: Text('Chọn ngày'),
-                        onPressed: () async{
-                          var pickedDate = await showDatePicker(
-                            context: context,
-                            firstDate: DateTime(1990),
-                            lastDate: DateTime.now(),
-                          );
-                          setState(() {
-                            if(pickedDate!=null){
-                              dateTime = pickedDate;
-                            }
-                          });
-                        },
-                      )
-                    ],
-                  ),
-                ),
+                DateTimeInput(dateTime: dateTime, onPressed:  (newDate) { setState(() {dateTime = newDate;});}),
 
                 Divider(),
 

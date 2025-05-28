@@ -84,7 +84,7 @@ class _TransactionListView extends State<TransactionListView>{
                         );
                       },
                       onDetailPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('đã ấn')));
+                        Navigator.pushNamed(context, '/transaction-edit',arguments: item);
                       },
                     ),
                   );

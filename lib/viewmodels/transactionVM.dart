@@ -35,6 +35,19 @@ class TransactionVM extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future<void> updateTransaction(TransactionModel t, int id) async{
+    await _db.update(t, id);
+
+    int indexPrivate =_transactionList.indexWhere((t) => t.id == id) as int;
+    if(indexPrivate != -1){
+      _transactionList[indexPrivate] = t;
+    }
+    int indexPublic =transactionList.indexWhere((t) => t.id == id) as int;
+    if(indexPublic != -1){
+      transactionList[indexPublic] = t;
+    }
+  }
+
   Future<void> deleteTransaction(int id) async{
     await _db.delete(id);
     _transactionList.removeWhere((t) => t.id == id);
