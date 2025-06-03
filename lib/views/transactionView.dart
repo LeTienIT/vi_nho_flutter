@@ -6,6 +6,8 @@ import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/transactionItem.dart';
 
 class TransactionListView extends StatefulWidget{
+  const TransactionListView({super.key});
+
   @override
   State<StatefulWidget> createState() => _TransactionListView();
 }
@@ -14,7 +16,6 @@ class _TransactionListView extends State<TransactionListView>{
   @override
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -56,6 +57,13 @@ class _TransactionListView extends State<TransactionListView>{
               ),
             ),
           ) :
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+            //   Tạo bộ lọc
+            ],
+          ),
           Expanded(
               child: ListView.builder(
                 itemCount: transactionVM.transactionList.length,
