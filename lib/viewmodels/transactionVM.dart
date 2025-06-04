@@ -122,7 +122,7 @@ class TransactionVM extends ChangeNotifier{
     notifyListeners();
   }
 
-  void applyFilter(FilterCondition condition){
+  void applyFilter(FilterCondition? condition){
     _filterCondition = condition;
     _filterTransaction();
   }

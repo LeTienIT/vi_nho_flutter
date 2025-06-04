@@ -2,7 +2,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
+import 'package:vi_nho/widgets/filterSection.dart';
 import 'package:vi_nho/widgets/transactionItem.dart';
 
 class TransactionListView extends StatefulWidget{
@@ -16,6 +18,7 @@ class _TransactionListView extends State<TransactionListView>{
   @override
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
+    final filterVM = context.watch<FilterVM>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -38,33 +41,30 @@ class _TransactionListView extends State<TransactionListView>{
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Divider(),
-          transactionVM.transactionList.isEmpty ?
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(8)
-            ),
-            width: double.infinity,
-            child: Text(
-              'Không có dữ liệu',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.amber,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 28
+          if(transactionVM.transactionList.isEmpty)...[
+            Divider(),
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(8)
+              ),
+              width: double.infinity,
+              child: Text(
+                'Không có dữ liệu',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.amber,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28
+                ),
               ),
             ),
-          ) :
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-            //   Tạo bộ lọc
-            ],
-          ),
-          Expanded(
+          ]
+          else
+            Divider(),
+            FilterSection(filterVM: filterVM, transactionVM: transactionVM,),
+            Expanded(
               child: ListView.builder(
                 itemCount: transactionVM.transactionList.length,
                 itemBuilder: (context, index){

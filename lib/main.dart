@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/views/addTransactionView.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/editTransactionView.dart';
@@ -12,6 +13,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TransactionVM()..initData()),
+        ChangeNotifierProvider(create: (_) => FilterVM())
       ],
       child: const MyApp(),
     )
