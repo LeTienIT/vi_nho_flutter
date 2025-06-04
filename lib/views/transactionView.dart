@@ -33,16 +33,17 @@ class _TransactionListView extends State<TransactionListView>{
               onPressed: (){
                 Navigator.pushNamed(context, '/transaction-add');
               },
-              icon: Icon(Icons.add)
+              icon: Icon(Icons.add, size: 30,)
           )
         ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          FilterSection(filterVM: filterVM, transactionVM: transactionVM,),
+          Divider(),
           if(transactionVM.transactionList.isEmpty)...[
-            Divider(),
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -62,8 +63,6 @@ class _TransactionListView extends State<TransactionListView>{
             ),
           ]
           else
-            Divider(),
-            FilterSection(filterVM: filterVM, transactionVM: transactionVM,),
             Expanded(
               child: ListView.builder(
                 itemCount: transactionVM.transactionList.length,
