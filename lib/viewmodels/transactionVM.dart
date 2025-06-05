@@ -24,7 +24,7 @@ class TransactionVM extends ChangeNotifier{
   }
 
   Future<void> initData() async{
-    final data = await _db.selectAll();
+    final data = await _db.selectAllTransaction();
     _transactionList.addAll(data);
     _transactionFilter = List.from(_transactionList);
     isLoad = true;
