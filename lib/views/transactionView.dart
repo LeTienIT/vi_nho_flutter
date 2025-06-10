@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/filterSection.dart';
@@ -19,6 +20,11 @@ class _TransactionListView extends State<TransactionListView>{
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
     final filterVM = context.watch<FilterVM>();
+    final categoryVM = context.watch<CategoryVM>();
+
+    if(!transactionVM.isLoad || !categoryVM.isLoad){
+      return CircularProgressIndicator();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -28,14 +34,6 @@ class _TransactionListView extends State<TransactionListView>{
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: (){
-                Navigator.pushNamed(context, '/transaction-add');
-              },
-              icon: Icon(Icons.add, size: 30,)
-          )
-        ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
@@ -83,7 +81,8 @@ class _TransactionListView extends State<TransactionListView>{
                           SnackBar(content: Text('Đã xóa'),duration: Duration(seconds: 1),)
                       );
                     },
-                    child: TransactionItem(transactionModel: item,
+                    child: TransactionItem(
+                      transactionModel: item,
                       isActive: transactionVM.isActive(item.id!),
                       onTap: () {
                         transactionVM.setActiveItem(
@@ -91,6 +90,10 @@ class _TransactionListView extends State<TransactionListView>{
                         );
                       },
                       onDetailPressed: () {
+                        final selectedCategory = categoryVM.findName(item.category);
+                        if (selectedCategory != null) {
+                          categoryVM.setSelect(selectedCategory);
+                        }
                         Navigator.pushNamed(context, '/transaction-edit',arguments: item);
                       },
                     ),
@@ -100,6 +103,15 @@ class _TransactionListView extends State<TransactionListView>{
           ),
 
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (categoryVM.categorySelect != null) {
+            categoryVM.setSelect(categoryVM.categoryList.first);
+          }
+          Navigator.pushNamed(context, '/transaction-add');
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

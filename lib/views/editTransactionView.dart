@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/models/transactionModel.dart';
+import 'package:vi_nho/widgets/categoryPicker.dart';
 
 import '../core/input_validators.dart';
+import '../viewmodels/categoryVM.dart';
 import '../viewmodels/transactionVM.dart';
 import '../widgets/dateTimeInput.dart';
 import '../widgets/numberForm.dart';
@@ -29,10 +31,13 @@ class _EditTransactionView extends State<EditTransactionView> {
   late final TextEditingController _amount;
   late final TextEditingController _note;
   late DateTime? dateTime;
+  late final CategoryVM categoryVM;
 
   @override
   void initState(){
     super.initState();
+    categoryVM = context.read<CategoryVM>();
+
     _type = widget.transactionModel.type;
     _category = TextEditingController(text: widget.transactionModel.category);
     _amount = TextEditingController(text: widget.transactionModel.amount.toString());
@@ -77,7 +82,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                   ),
 
                   SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
-                  TextForm(category: _category, title: 'Phân loại giao dịch', hint: 'VD: ăn uống, mua săm, ...', validator: InputValidators.categoryValidator),
+                  CategoryPicker(),
 
                   SessionTitle(title: 'Số lượng', subtitle: 'Số tiền chi trả cho việc này',),
                   NumberForm(amount: _amount, title: 'Số tiền', hint: 'VD: 20.000', validator: InputValidators.amountValidator,),
@@ -111,7 +116,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                                   id: widget.transactionModel.id,
                                   type: _type!,
                                   amount: double.parse(_amount.text),
-                                  category: _category.text,
+                                  category: context.read<CategoryVM>().categorySelect!.name,
                                   note: _note.text,
                                   dateTime: dateTime!
                               );

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/models/transactionModel.dart';
+import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
+import 'package:vi_nho/widgets/categoryPicker.dart';
 import 'package:vi_nho/widgets/sessionTitle.dart';
 
 import '../widgets/dateTimeInput.dart';
@@ -23,7 +25,6 @@ class AddTransactionView extends StatefulWidget{
 class _AddTransactionView extends State<AddTransactionView>{
   String? _type = 'Chi';
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _category = TextEditingController();
   final TextEditingController _amount = TextEditingController();
   final TextEditingController _note = TextEditingController();
   DateTime? dateTime;
@@ -32,9 +33,9 @@ class _AddTransactionView extends State<AddTransactionView>{
   @override
   void dispose() {
     super.dispose();
-    _category.dispose();
     _amount.dispose();
     _note.dispose();
+
   }
 
   @override
@@ -66,7 +67,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                 ),
 
                 SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
-                TextForm(category: _category, title: 'Phân loại giao dịch', hint: 'VD: ăn uống, mua săm, ...', validator: InputValidators.categoryValidator),
+                CategoryPicker(),
 
                 SessionTitle(title: 'Số lượng', subtitle: 'Số tiền chi trả cho việc này',),
                 NumberForm(amount: _amount, title: 'Số tiền', hint: 'VD: 20.000', validator: InputValidators.amountValidator,),
@@ -84,6 +85,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                     Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () async{
+                            print("Dữ liệu mới: ${context.read<CategoryVM>().categorySelect!.name}");
                             if(_formKey.currentState!.validate()){
                               if(dateTime == null){
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -99,7 +101,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                             TransactionModel t = new TransactionModel(
                                 type: _type!,
                                 amount: double.parse(_amount.text),
-                                category: _category.text,
+                                category: context.read<CategoryVM>().categorySelect!.name,
                                 note: _note.text,
                                 dateTime: dateTime!
                             );

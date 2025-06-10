@@ -94,7 +94,7 @@ class DatabaseService{
   }
 
   Future<List<CategoryModel>> selectAllCategory() async{
-    final rs = await (await db).query(DBConstants.tableCategory, orderBy: 'id DESC');
+    final rs = await (await db).query(DBConstants.tableCategory);
     return rs.map( (t) => CategoryModel.fromMap(t) ).toList();
   }
 

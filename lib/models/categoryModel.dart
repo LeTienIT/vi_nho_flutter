@@ -18,9 +18,9 @@ class CategoryModel{
   factory CategoryModel.fromMap(Map<String, dynamic> category){
     return CategoryModel(
         name: category[DBConstants.columnName] as String,
-        icon: category[DBConstants.columnIcon] as String,
-        color: category[DBConstants.columnColor] as String,
-        note: category[DBConstants.columnNote] as String,
+        icon: category[DBConstants.columnIcon] ?? '',
+        color: category[DBConstants.columnColor] ?? '',
+        note: category[DBConstants.columnNote] ?? '',
     );
   }
 }

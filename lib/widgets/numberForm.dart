@@ -7,7 +7,7 @@ class NumberForm extends StatelessWidget {
   final String? hint;
   final String? Function(String?)? validator;
 
-  NumberForm({super.key, required this.amount, this.validator, required this.title, this.hint=''});
+  const NumberForm({super.key, required this.amount, this.validator, required this.title, this.hint=''});
 
   @override
   Widget build(BuildContext context) {
