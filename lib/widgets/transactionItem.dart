@@ -26,11 +26,11 @@ class TransactionItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isActive ? Colors.greenAccent : Colors.white,
+          color: isActive ? Colors.greenAccent : Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
+              // color: Colors.grey.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -44,11 +44,9 @@ class TransactionItem extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(
                   Icons.category,
-                  color: Colors.blueAccent,
                 ),
                 title: Text(
                   '${transactionModel.category} • ${transactionModel.dateTimeString}',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 subtitle: Text(
                   (transactionModel.note?.isEmpty ?? true)
@@ -65,7 +63,7 @@ class TransactionItem extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
-              ), // Giữ nguyên như cũ
+              ),
             ),
 
             // Nút chi tiết (chỉ hiện khi active)

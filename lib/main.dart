@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
+import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/views/addTransactionView.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/editTransactionView.dart';
+import 'package:vi_nho/views/settingView.dart';
 import 'package:vi_nho/views/transactionView.dart';
-
+import 'package:vi_nho/core/light_theme.dart';
+import 'package:vi_nho/core/dark_theme.dart';
 import 'models/transactionModel.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreference.instance.init();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => TransactionVM()..initData()),
         ChangeNotifierProvider(create: (_) => FilterVM()),
-        ChangeNotifierProvider(create: (_) => CategoryVM()..initData())
+        ChangeNotifierProvider(create: (_) => CategoryVM()..initData()),
+        ChangeNotifierProvider.value(value: ThemeVM())
       ],
       child: const MyApp(),
     )
@@ -26,11 +33,12 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeVM>().isDark;
     return MaterialApp(
       title: 'ChiNote App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case '/transaction-list':
@@ -41,6 +49,10 @@ class MyApp extends StatelessWidget {
             final transactionModel = settings.arguments as TransactionModel;
             return MaterialPageRoute(
               builder: (_) => EditTransactionView(transactionModel: transactionModel),
+            );
+          case '/setting':
+            return MaterialPageRoute(
+              builder: (_) => SettingView(),
             );
         }
         return null;

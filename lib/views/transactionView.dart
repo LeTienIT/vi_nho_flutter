@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
@@ -101,17 +102,30 @@ class _TransactionListView extends State<TransactionListView>{
                 },
               )
           ),
-
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (categoryVM.categorySelect != null) {
-            categoryVM.setSelect(categoryVM.categoryList.first);
-          }
-          Navigator.pushNamed(context, '/transaction-add');
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.clear,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.add),
+              label: 'Thêm giao dịch',
+              onTap: (){
+                if (categoryVM.categorySelect != null) {
+                  categoryVM.setSelect(categoryVM.categoryList.first);
+                }
+                Navigator.pushNamed(context, '/transaction-add');
+              }
+          ),
+          SpeedDialChild(
+              child: Icon(Icons.settings),
+              label: 'Cài đặt',
+              onTap: (){
+                Navigator.pushNamed(context, '/setting');
+              }
+          )
+        ],
       ),
     );
   }

@@ -27,7 +27,6 @@ class EditTransactionView extends StatefulWidget{
 class _EditTransactionView extends State<EditTransactionView> {
   late String? _type;
   late final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _category;
   late final TextEditingController _amount;
   late final TextEditingController _note;
   late DateTime? dateTime;
@@ -39,7 +38,6 @@ class _EditTransactionView extends State<EditTransactionView> {
     categoryVM = context.read<CategoryVM>();
 
     _type = widget.transactionModel.type;
-    _category = TextEditingController(text: widget.transactionModel.category);
     _amount = TextEditingController(text: widget.transactionModel.amount.toString());
     _note = TextEditingController(text: widget.transactionModel.note);
     dateTime = widget.transactionModel.dateTime;
@@ -48,7 +46,6 @@ class _EditTransactionView extends State<EditTransactionView> {
   @override
   void dispose() {
     super.dispose();
-    _category.dispose();
     _amount.dispose();
     _note.dispose();
   }

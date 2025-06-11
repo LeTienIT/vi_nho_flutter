@@ -22,9 +22,10 @@ class FilterSection extends StatelessWidget{
     selectedDate ??= DateTime.now();
     return Card(
         margin: const EdgeInsets.all(12),
+        // color: Theme.of(context).cardColor,
         child: ExpansionTile(
-          title: const Text("Bộ lọc"),
-          leading: const Icon(Icons.filter_alt),
+          title: Text("Bộ lọc",),
+          leading: Icon(Icons.filter_alt),
           children: [
             Padding(
               padding: const EdgeInsets.all(12),
@@ -32,14 +33,14 @@ class FilterSection extends StatelessWidget{
                 children: [
                   Row(
                     children: [
-                      const SizedBox(
+                       SizedBox(
                         width: 100,
-                        child: Text("Trường"),
+                        child: Text("Trường",),
                       ),
                       Expanded(
                         child: DropdownButtonFormField<FilterField>(
                           value: filterVM.selectedField,
-                          hint: const Text('Chọn trường'),
+                          hint: Text('Chọn trường'),
                           items: FilterField.values.map((e) {
                             return DropdownMenuItem(
                               value: e,
@@ -56,7 +57,7 @@ class FilterSection extends StatelessWidget{
 
                   Row(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 100,
                         child: Text("Điều kiện"),
 
@@ -64,7 +65,7 @@ class FilterSection extends StatelessWidget{
                       Expanded(
                         child: DropdownButtonFormField<FilterOperator>(
                           value: filterVM.selectedOperator,
-                          hint: const Text('Chọn điều kiện'),
+                          hint: Text('Chọn điều kiện'),
                           items: FilterOperator.values.map((e) {
                             return DropdownMenuItem(
                               value: e,
@@ -81,7 +82,7 @@ class FilterSection extends StatelessWidget{
                   
                   Row(
                     children: [
-                      const SizedBox(
+                      SizedBox(
                         width: 100,
                         child: Text("Giá trị"),
 
