@@ -4,11 +4,12 @@ class SharedPreference{
   static final SharedPreference _instance = SharedPreference._internal();
   late SharedPreferences _preferences;
   SharedPreference._internal();
-
+  bool isLoad = false;
   static SharedPreference get instance => _instance;
 
   Future<void> init() async{
     _preferences = await SharedPreferences.getInstance();
+    isLoad = true;
   }
 
   Future<void> printAllPrefs() async {

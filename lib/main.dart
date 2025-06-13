@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
+import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/views/addTransactionView.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
+import 'package:vi_nho/views/dashboardMainView.dart';
 import 'package:vi_nho/views/editTransactionView.dart';
 import 'package:vi_nho/views/settingView.dart';
 import 'package:vi_nho/views/transactionView.dart';
@@ -22,7 +24,8 @@ void main() async{
         ChangeNotifierProvider(create: (_) => TransactionVM()..initData()),
         ChangeNotifierProvider(create: (_) => FilterVM()),
         ChangeNotifierProvider(create: (_) => CategoryVM()..initData()),
-        ChangeNotifierProvider.value(value: ThemeVM())
+        ChangeNotifierProvider.value(value: ThemeVM()),
+        // ChangeNotifierProvider(create: (_) => DashboardMainViewModel()..generateDashboard())
       ],
       child: const MyApp(),
     )
@@ -57,7 +60,15 @@ class MyApp extends StatelessWidget {
         }
         return null;
       },
-      home: TransactionListView(),
+      home: Builder(
+        builder: (context) {
+          final transactionVM = context.read<TransactionVM>();
+          return ChangeNotifierProvider(
+            create: (_) => DashboardMainViewModel(transactionVM)..generateDashboard(),
+            child: const DashboardMainView(),
+          );
+        },
+      ),
     );
   }
 }

@@ -112,7 +112,7 @@ class _TransactionListView extends State<TransactionListView>{
               child: Icon(Icons.add),
               label: 'Thêm giao dịch',
               onTap: (){
-                if (categoryVM.categorySelect != null) {
+                if (categoryVM.categorySelect == null) {
                   categoryVM.setSelect(categoryVM.categoryList.first);
                 }
                 Navigator.pushNamed(context, '/transaction-add');

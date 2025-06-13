@@ -4,9 +4,11 @@ import 'package:vi_nho/services/sharedPreference.dart';
 class ThemeVM extends ChangeNotifier{
   static final ThemeVM _instance = ThemeVM._internal();
   bool _isDark = false;
+  bool isLoad = false;
 
   ThemeVM._internal(){
     _isDark = SharedPreference.instance.getValue<bool>('isDark') ?? false;
+    isLoad = true;
   }
 
   factory ThemeVM(){

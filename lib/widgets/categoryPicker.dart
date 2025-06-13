@@ -10,6 +10,7 @@ class CategoryPicker extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final categoryVM = context.watch<CategoryVM>();
+    // print(categoryVM.categorySelect == null ? 'null' : categoryVM.categorySelect!.name);
     return Padding(
         padding: EdgeInsets.only(top: 16, right: 16, left: 5),
         child:  DropdownButtonFormField<CategoryModel>(

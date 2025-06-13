@@ -85,7 +85,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                     Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () async{
-                            print("Dữ liệu mới: ${context.read<CategoryVM>().categorySelect!.name}");
+                            // print("Dữ liệu mới: ${context.read<CategoryVM>().categorySelect!.name}");
                             if(_formKey.currentState!.validate()){
                               if(dateTime == null){
                                 ScaffoldMessenger.of(context).showSnackBar(
