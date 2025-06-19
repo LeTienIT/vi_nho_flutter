@@ -1,115 +1,81 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
-
+import 'package:fl_chart/fl_chart.dart';
 import '../models/transactionModel.dart';
 
 class DashboardMainViewModel extends ChangeNotifier{
   TransactionVM? _transactionVM;
-  double todayIncome = 0;
-  double todayExpense = 0;
-
-  double weekIncome = 0;
-  double weekExpense = 0;
-
-  double monthIncome = 0;
-  double monthExpense = 0;
-
-  Map<String, double> todayCategoryTotals = {};
-  Map<String, double> weekCategoryTotals = {};
-  Map<String, double> monthCategoryTotals = {};
-
-  TransactionModel? largestWeekExpense;
-  String? mostUsedCategoryWeek;
-  String? categoryWithMaxAmountWeek;
-
+  List<TransactionModel>? transactionList;
   bool isLoading = false;
 
   DashboardMainViewModel(this._transactionVM) {
     if (_transactionVM != null) {
-      generateDashboard();
+      if(_transactionVM!.isLoad){
+        transactionList =_transactionVM!.transactionList;
+        _generateDashboardData();
+        isLoading = true;
+        notifyListeners();
+      }
     }
   }
 
   void updateData(TransactionVM vm) {
     _transactionVM = vm;
-    generateDashboard();
+    if(_transactionVM!.isLoad && !isLoading){
+      transactionList =_transactionVM!.transactionList;
+      _generateDashboardData();
+      isLoading = true;
+      notifyListeners();
+    }
   }
 
-  void generateDashboard(){
-    final list = _transactionVM!.transactionList;
+  double totalIncome = 0;
+  double totalExpense = 0;
+  double get balance => totalIncome - totalExpense;
+
+  Map<String, double> categoryExpenseMap = {}; // PieChart
+  List<FlSpot> dailyExpenseSpots = []; // LineChart
+  List<MapEntry<String, double>> topCategories = [];
+
+  // ------------ Hàm xử lý chính -----------------------------
+
+  void _generateDashboardData() {
+    if (transactionList == null) return;
 
     final now = DateTime.now();
-    todayIncome = 0;
-    todayExpense = 0;
-    weekIncome = 0;
-    weekExpense = 0;
-    monthIncome = 0;
-    monthExpense = 0;
+    final currentMonthList = transactionList!.where((tx) =>
+    tx.dateTime.month == now.month && tx.dateTime.year == now.year);
 
-    todayCategoryTotals.clear();
-    weekCategoryTotals.clear();
-    monthCategoryTotals.clear();
+    totalIncome = 0;
+    totalExpense = 0;
+    categoryExpenseMap.clear();
 
-    Map<String, double> categoryAmountWeek = {};
-    Map<String, int> categoryCountWeek = {};
-    double maxExpense = 0;
-    TransactionModel? maxExpenseTx;
+    final dailyMap = <int, double>{}; // day -> amount
+    for (var tx in currentMonthList) {
+      if (tx.type == 'Thu') {
+        totalIncome += tx.amount;
+      } else {
+        totalExpense += tx.amount;
 
-    for (final tx in list) {
-      final date = tx.dateTime;
-      final isToday = date.year == now.year && date.month == now.month && date.day == now.day;
-      final isSameWeek = isSameISOWeek(date, now);
-      final isSameMonth = date.year == now.year && date.month == now.month;
+        // PieChart - category grouping
+        categoryExpenseMap[tx.category] =
+            (categoryExpenseMap[tx.category] ?? 0) + tx.amount;
 
-      if (isToday) {
-        if (tx.type == 'Thu') todayIncome += tx.amount;
-        if (tx.type == 'Chi') todayExpense += tx.amount;
-        todayCategoryTotals[tx.category] = (todayCategoryTotals[tx.category] ?? 0) + tx.amount;
-      }
-
-      if (isSameWeek) {
-        if (tx.type == 'Thu') weekIncome += tx.amount;
-        if (tx.type == 'Chi') {
-          weekExpense += tx.amount;
-          if (tx.amount > maxExpense) {
-            maxExpense = tx.amount;
-            maxExpenseTx = tx;
-          }
-        }
-        categoryAmountWeek[tx.category] = (categoryAmountWeek[tx.category] ?? 0) + tx.amount;
-        categoryCountWeek[tx.category] = (categoryCountWeek[tx.category] ?? 0) + 1;
-        weekCategoryTotals[tx.category] = categoryAmountWeek[tx.category]!;
-      }
-
-      if (isSameMonth) {
-        if (tx.type == 'Thu') monthIncome += tx.amount;
-        if (tx.type == 'Chi') monthExpense += tx.amount;
-        monthCategoryTotals[tx.category] = (monthCategoryTotals[tx.category] ?? 0) + tx.amount;
+        // LineChart - daily expense
+        int day = tx.dateTime.day;
+        dailyMap[day] = (dailyMap[day] ?? 0) + tx.amount;
       }
     }
 
-    largestWeekExpense = maxExpenseTx;
-    categoryWithMaxAmountWeek = _getMaxKey(categoryAmountWeek);
-    mostUsedCategoryWeek = _getMaxKey(categoryCountWeek);
-    isLoading = true;
-    notifyListeners();
-  }
-
-  String? _getMaxKey(Map<String, num> data) {
-    if (data.isEmpty) return null;
-
-    // Ép kiểu sang MapEntry<String, double>
-    final entries = data.entries
-        .map((e) => MapEntry(e.key, e.value.toDouble()))
+    // LineChart: chuyển dailyMap => FlSpot
+    final sortedDays = dailyMap.keys.toList()..sort();
+    dailyExpenseSpots = sortedDays
+        .map((day) => FlSpot(day.toDouble(), dailyMap[day]!))
         .toList();
 
-    return entries.reduce((a, b) => a.value >= b.value ? a : b).key;
-  }
-
-  bool isSameISOWeek(DateTime d1, DateTime d2) {
-    final monday1 = d1.subtract(Duration(days: d1.weekday - 1));
-    final monday2 = d2.subtract(Duration(days: d2.weekday - 1));
-    return monday1.year == monday2.year && monday1.month == monday2.month && monday1.day == monday2.day;
+    // Top category
+    topCategories = categoryExpenseMap.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
   }
 }

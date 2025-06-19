@@ -25,7 +25,10 @@ void main() async{
         ChangeNotifierProvider(create: (_) => FilterVM()),
         ChangeNotifierProvider(create: (_) => CategoryVM()..initData()),
         ChangeNotifierProvider.value(value: ThemeVM()),
-        // ChangeNotifierProvider(create: (_) => DashboardMainViewModel()..generateDashboard())
+        ChangeNotifierProxyProvider<TransactionVM, DashboardMainViewModel>(
+          create: (_) => DashboardMainViewModel(null),
+          update: (_, transactionVM, previous) => previous!..updateData(transactionVM),
+        ),
       ],
       child: const MyApp(),
     )
@@ -60,15 +63,7 @@ class MyApp extends StatelessWidget {
         }
         return null;
       },
-      home: Builder(
-        builder: (context) {
-          final transactionVM = context.read<TransactionVM>();
-          return ChangeNotifierProvider(
-            create: (_) => DashboardMainViewModel(transactionVM)..generateDashboard(),
-            child: const DashboardMainView(),
-          );
-        },
-      ),
+      home: const DashboardMainView(),
     );
   }
 }

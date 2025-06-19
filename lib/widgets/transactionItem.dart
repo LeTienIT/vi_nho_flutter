@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/transactionModel.dart';
 
 class TransactionItem extends StatelessWidget {
@@ -56,7 +57,7 @@ class TransactionItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 trailing: Text(
-                  (inCome ? '+' : '-') + transactionModel.amount.toString(),
+                  (inCome ? '+ ' : '- ') + NumberFormat.currency(locale: 'vi').format(transactionModel.amount).toString(),
                   style: TextStyle(
                     color: inCome ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,
