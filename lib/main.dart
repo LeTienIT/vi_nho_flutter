@@ -60,6 +60,10 @@ class MyApp extends StatelessWidget {
             return MaterialPageRoute(
               builder: (_) => SettingView(),
             );
+          case '/home':
+            return MaterialPageRoute(
+                builder: (_) => DashboardMainView()
+            );
         }
         return null;
       },

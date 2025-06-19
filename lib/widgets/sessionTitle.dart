@@ -19,7 +19,6 @@ class SessionTitle extends StatelessWidget{
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
                 ),
                 children: [
                   TextSpan(
@@ -28,7 +27,6 @@ class SessionTitle extends StatelessWidget{
                       fontSize: 14,
                       fontWeight: FontWeight.normal,
                       fontStyle: FontStyle.italic,
-                      color: Colors.black,
                     )
                   )
                 ]

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../viewmodels/themeVM.dart';
+import '../widgets/dashboard/menu.dart';
 
 class SettingView extends StatefulWidget{
   const SettingView({super.key});
@@ -18,6 +19,7 @@ class _SettingView extends State<SettingView>{
     bool light = context.watch<ThemeVM>().isDark;
     return Scaffold(
       appBar: AppBar(title: Text('Cài đặt',)),
+      drawer: Drawer(child: Menu(),),
       body: ListView(
         children: [
           ExpansionTile(

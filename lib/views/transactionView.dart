@@ -9,6 +9,8 @@ import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/filterSection.dart';
 import 'package:vi_nho/widgets/transactionItem.dart';
 
+import '../widgets/dashboard/menu.dart';
+
 class TransactionListView extends StatefulWidget{
   const TransactionListView({super.key});
 
@@ -36,6 +38,7 @@ class _TransactionListView extends State<TransactionListView>{
         ),
         centerTitle: true,
       ),
+      drawer: Drawer(child: Menu(),),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -118,13 +121,6 @@ class _TransactionListView extends State<TransactionListView>{
                 Navigator.pushNamed(context, '/transaction-add');
               }
           ),
-          SpeedDialChild(
-              child: Icon(Icons.settings),
-              label: 'Cài đặt',
-              onTap: (){
-                Navigator.pushNamed(context, '/setting');
-              }
-          )
         ],
       ),
     );

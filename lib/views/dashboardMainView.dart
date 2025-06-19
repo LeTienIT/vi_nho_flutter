@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/dashboard/lineChart.dart';
+import 'package:vi_nho/widgets/dashboard/menu.dart';
 import 'package:vi_nho/widgets/dashboard/pieChart.dart';
 import 'package:vi_nho/widgets/dashboard/summaryCard.dart';
 import 'package:vi_nho/widgets/dashboard/topCategory.dart';
@@ -46,33 +47,7 @@ class DashboardMainView extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        children: [
-          SpeedDialChild(
-            child: Icon(Icons.list),
-            label: 'Danh sách',
-            onTap: () => {
-              Navigator.pushNamed(context, '/transaction-list')
-            }
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.settings),
-              label: 'Cài đặt',
-              onTap: () => {
-                Navigator.pushNamed(context, '/setting')
-              }
-          ),
-          SpeedDialChild(
-              child: Icon(Icons.add),
-              label: 'Thêm mới',
-              onTap: () => {
-                Navigator.pushNamed(context, '/transaction-add')
-              }
-          ),
-        ],
-      ),
+      drawer: Drawer(child: Menu(),),
     );
   }
 

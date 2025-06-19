@@ -22,7 +22,7 @@ final darkTheme = ThemeData(
     bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
     bodyMedium: TextStyle(fontSize: 14, color: Colors.white70),
     bodySmall: TextStyle(fontSize: 12, color: Colors.white60),
-    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
   ),
 
   cardTheme: const CardTheme(
