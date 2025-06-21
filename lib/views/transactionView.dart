@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
-import 'package:vi_nho/widgets/filterSection.dart';
-import 'package:vi_nho/widgets/transactionItem.dart';
+import 'package:vi_nho/widgets/filter_transaction/filterSection.dart';
+import 'package:vi_nho/widgets/transaction/transactionItem.dart';
 
 import '../widgets/dashboard/menu.dart';
 

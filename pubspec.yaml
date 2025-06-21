@@ -25,6 +25,10 @@ dependencies:
 
   fl_chart: ^1.0.0
 
+  image_picker: ^1.0.0
+  flutter_image_compress: ^2.1.0
+  image: ^4.0.17
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

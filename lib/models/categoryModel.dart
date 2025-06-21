@@ -23,4 +23,11 @@ class CategoryModel{
         note: category[DBConstants.columnNote] ?? '',
     );
   }
+
+  CategoryModel copyWith({String? name, String? icon}) {
+    return CategoryModel(
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+    );
+  }
 }

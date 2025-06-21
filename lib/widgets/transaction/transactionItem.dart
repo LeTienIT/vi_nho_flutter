@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../models/transactionModel.dart';
+import '../../models/transactionModel.dart';
 
 class TransactionItem extends StatelessWidget {
   final TransactionModel transactionModel;

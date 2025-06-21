@@ -6,7 +6,7 @@ class TextForm extends StatelessWidget {
   final String? Function(String?)? validator;
   final String title;
   final String? hint;
-  TextForm({super.key, required this.category, this.validator, required this.title, this.hint=''});
+  const TextForm({super.key, required this.category, this.validator, required this.title, this.hint=''});
 
   @override
   Widget build(BuildContext context) {

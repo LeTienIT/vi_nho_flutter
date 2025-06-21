@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SessionTitle extends StatelessWidget{
-
   String title, subtitle;
+  bool required;
 
-  SessionTitle({super.key, required this.title, this.subtitle = ''});
+  SessionTitle({super.key, required this.title, this.subtitle = '', this.required = false});
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +16,7 @@ class SessionTitle extends StatelessWidget{
           child: RichText(
               text: TextSpan(
                 text: title,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.titleLarge,
                 children: [
                   TextSpan(
                     text: subtitle.isEmpty ? '' : ' - $subtitle',
@@ -28,7 +25,12 @@ class SessionTitle extends StatelessWidget{
                       fontWeight: FontWeight.normal,
                       fontStyle: FontStyle.italic,
                     )
-                  )
+                  ),
+                  if(required)
+                    TextSpan(
+                      text: '*',
+                      style: TextStyle(color: Colors.red)
+                    )
                 ]
               )
           )

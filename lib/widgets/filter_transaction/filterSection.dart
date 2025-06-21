@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vi_nho/models/filterModel.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
-import 'package:vi_nho/widgets/filterValueInput.dart';
+import 'package:vi_nho/widgets/filter_transaction/filterValueInput.dart';
 
 class FilterSection extends StatelessWidget{
   final FilterVM filterVM;

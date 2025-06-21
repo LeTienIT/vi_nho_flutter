@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -6,7 +5,7 @@ class DateTimeInput extends StatelessWidget {
   final DateTime? dateTime;
   final ValueChanged<DateTime> onPressed;
 
-  DateTimeInput({super.key, required this.dateTime, required this.onPressed});
+  const DateTimeInput({super.key, required this.dateTime, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

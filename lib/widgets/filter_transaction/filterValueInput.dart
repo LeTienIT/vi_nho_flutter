@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vi_nho/models/filterModel.dart';
 
-import '../viewmodels/filterVM.dart';
+import '../../viewmodels/filterVM.dart';
 
 class FilterValueInput extends StatelessWidget{
   final FilterVM filterVM;

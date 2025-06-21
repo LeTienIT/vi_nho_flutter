@@ -5,10 +5,12 @@ import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
-import 'package:vi_nho/views/addTransactionView.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
+import 'package:vi_nho/views/category/addCategoryView.dart';
+import 'package:vi_nho/views/categoryView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
-import 'package:vi_nho/views/editTransactionView.dart';
+import 'package:vi_nho/views/transaction/addTransactionView.dart';
+import 'package:vi_nho/views/transaction/editTransactionView.dart';
 import 'package:vi_nho/views/settingView.dart';
 import 'package:vi_nho/views/transactionView.dart';
 import 'package:vi_nho/core/light_theme.dart';
@@ -49,8 +51,12 @@ class MyApp extends StatelessWidget {
         switch (settings.name) {
           case '/transaction-list':
             return MaterialPageRoute(builder: (_) => TransactionListView());
+          case '/category-list':
+            return MaterialPageRoute(builder: (_) => CategoryView());
           case '/transaction-add':
             return MaterialPageRoute(builder: (_) => AddTransactionView());
+          case '/category-add':
+            return MaterialPageRoute(builder: (_) => AddCategoryView());
           case '/transaction-edit':
             final transactionModel = settings.arguments as TransactionModel;
             return MaterialPageRoute(

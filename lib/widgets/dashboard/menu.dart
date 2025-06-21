@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Menu extends StatelessWidget{
+  const Menu({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -58,8 +60,8 @@ class Menu extends StatelessWidget{
                   ),
                   ListTile(
                     leading: const Icon(Icons.category_outlined),
-                    title: const Text('Quản lý loại giao dịch'),
-                    onTap: () {},
+                    title: const Text('Loại giao dịch'),
+                    onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/category-list', (route) => false),
                   ),
                 ],
               ),

@@ -2,16 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/models/transactionModel.dart';
-import 'package:vi_nho/widgets/categoryPicker.dart';
+import 'package:vi_nho/widgets/transaction/categoryPicker.dart';
 
-import '../core/input_validators.dart';
-import '../viewmodels/categoryVM.dart';
-import '../viewmodels/transactionVM.dart';
-import '../widgets/dateTimeInput.dart';
-import '../widgets/numberForm.dart';
-import '../widgets/sessionTitle.dart';
-import '../widgets/textForm.dart';
-import '../widgets/typeSelector.dart';
+import '../../core/input_validators.dart';
+import '../../viewmodels/categoryVM.dart';
+import '../../viewmodels/transactionVM.dart';
+import '../../widgets/dateTimeInput.dart';
+import '../../widgets/numberForm.dart';
+import '../../widgets/sessionTitle.dart';
+import '../../widgets/textForm.dart';
+import '../../widgets/typeSelector.dart';
 
 class EditTransactionView extends StatefulWidget{
 
