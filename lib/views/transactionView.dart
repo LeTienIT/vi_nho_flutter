@@ -70,6 +70,13 @@ class _TransactionListView extends State<TransactionListView>{
                 itemCount: transactionVM.transactionList.length,
                 itemBuilder: (context, index){
                   final item = transactionVM.transactionList[index];
+                  final category = categoryVM.findName(item.category);
+                  String? path;
+                  if(category!=null){
+                    if(category.icon != null && category.icon!.trim().isNotEmpty) {
+                      path = category.icon;
+                    }
+                  }
                   return Dismissible(
                     key: Key(transactionVM.transactionList[index].id!.toString()),
                     direction: DismissDirection.endToStart,
@@ -87,6 +94,7 @@ class _TransactionListView extends State<TransactionListView>{
                     },
                     child: TransactionItem(
                       transactionModel: item,
+                      path: path,
                       isActive: transactionVM.isActive(item.id!),
                       onTap: () {
                         transactionVM.setActiveItem(

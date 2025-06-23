@@ -58,26 +58,64 @@ class CategoryVM extends ChangeNotifier{
       }
     }
     await _db.insertC(t);
-    _categoryList.add(t);
+    _categoryList.insert(_categoryList.length - 1, t);
 
     _isInserting = false;
     notifyListeners();
   }
 
-  Future<void> updateCategory(CategoryModel t, String id) async{
-    await _db.updateC(t, id);
+  Future<Map<String, dynamic>> updateCategory(CategoryModel t, String id, String newPath) async {
+    try {
+      if (newPath.trim().isNotEmpty) {
+        if (t.icon != null && t.icon!.trim().isNotEmpty) {
+          await _imageService.deleteFile(t.icon!);
+        }
 
-    int indexPrivate =_categoryList.indexWhere((t) => t.name == id) as int;
-    if(indexPrivate != -1){
-      _categoryList[indexPrivate] = t;
+        final original = File(newPath);
+        final saved = await _imageService.compressAndSaveIcon(original);
+        if (saved == null) {
+          return {'status': false, 'message': 'Lưu icon thất bại'};
+        }
+
+        t = t.copyWith(icon: saved.path);
+      }
+
+      await _db.updateC(t, id);
+
+      final index = _categoryList.indexWhere((e) => e.name == id);
+      if (index == -1) {
+        return {'status': false, 'message': 'Không tìm thấy danh mục cần cập nhật'};
+      }
+      _categoryList[index] = t;
       notifyListeners();
+      return {'status': true, 'message': 'Cập nhật thành công'};
+    } catch (e) {
+      return {'status': false, 'message': 'Lỗi: $e'};
     }
   }
 
-  Future<void> deleteCategory(String id) async{
-    await _db.deleteC(id);
-    _categoryList.removeWhere((t) => t.name == id);
-    notifyListeners();
+
+  bool checkValueDefault(String name){
+    return name == 'Khác';
+  }
+
+  Future<Map<String, dynamic>> deleteCategory(String id) async{
+    final usedCount = await _db.countTransactionsWithCategory(id);
+    if (usedCount > 0) {
+      notifyListeners();
+      return{'status': false, 'message':'Không thể xóa loại giao dịch này vì nó đang được dùng bởi 1 bản ghi trong dánh sách giao dịch'};
+    }
+    CategoryModel? c = findName(id);
+    if(c!=null){
+      if(c.icon!=null && c.icon!.isNotEmpty){
+        await _imageService.deleteFile(c.icon!);
+      }
+      await _db.deleteC(id);
+      _categoryList.removeWhere((t) => t.name == id);
+      notifyListeners();
+      return{'status': true, 'message':'Xóa thành công'};
+    }
+    return{'status': false, 'message':'Xóa thất bại'};
   }
 
   CategoryModel? findName(String name){

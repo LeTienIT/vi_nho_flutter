@@ -23,7 +23,7 @@ class CategoryView extends StatelessWidget{
       ),
       drawer: Drawer(child: Menu(),),
       body: ListView.builder(
-        itemCount: categoryVM.categoryList.length,
+        itemCount: categoryVM.categoryList.length-1,
         itemBuilder: (context, index){
           final item = categoryVM.categoryList[index];
           return Dismissible(
@@ -34,10 +34,19 @@ class CategoryView extends StatelessWidget{
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Icon(Icons.delete),
               ),
-              direction: DismissDirection.endToStart,
-              onDismissed: (key) async {
-                await categoryVM.deleteCategory(categoryVM.categoryList[index].name);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Đã xóa'),duration: Duration(seconds: 1),));
+              direction: categoryVM.checkValueDefault(item.name) ? DismissDirection.none : DismissDirection.endToStart,
+              confirmDismiss: (key) async {
+                final result = await categoryVM.deleteCategory(categoryVM.categoryList[index].name);
+                if(result['status']){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message']),duration: Duration(seconds: 1),));
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(result['message']),
+                    duration: Duration(seconds: 3),
+                    backgroundColor: Colors.red,
+                  ));
+                }
+                return result['status'];
               },
               child: CategoryItem(
                   item: item,
@@ -48,7 +57,7 @@ class CategoryView extends StatelessWidget{
                     );
                   },
                   onDetailPressed: (){
-                    // Navigator.pushNamed(context, '/category-edit',arguments: item);
+                    Navigator.pushNamed(context, '/category-edit',arguments: item);
                   }
               ),
           );

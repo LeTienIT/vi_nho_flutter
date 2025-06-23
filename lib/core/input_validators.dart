@@ -21,7 +21,7 @@ class InputValidators{
   }
 
   static String? notEmpty(String? value, {String message = 'Không được để trống'}) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return message;
     }
     return null;

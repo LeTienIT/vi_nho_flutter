@@ -23,8 +23,7 @@ class _SettingView extends State<SettingView>{
       body: ListView(
         children: [
           ExpansionTile(
-            // collapsedBackgroundColor: Theme.of(context).colorScheme.onSurface,
-            // backgroundColor: Theme.of(context).colorScheme.onSurface,
+            initiallyExpanded: true,
             leading: Icon(Icons.palette),
             title: Text('Giao diện'),
             children: [

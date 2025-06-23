@@ -124,7 +124,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                               );
                             }
                           },
-                          label: Text('Add'),
+                          label: Text('Thêm'),
                           icon: Icon(Icons.add),
                       )
                     )

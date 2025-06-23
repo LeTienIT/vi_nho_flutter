@@ -61,9 +61,22 @@ class ImageService {
     return result != null ? File(result.path) : null;
   }
 
-
   Future<String> getSavedIconPath(String fileName) async {
     final dir = await getApplicationDocumentsDirectory();
     return p.join(dir.path, fileName);
+  }
+
+  Future<bool> deleteFile(String path) async {
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 }

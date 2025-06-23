@@ -106,6 +106,16 @@ class DatabaseService{
     return (await db).update(DBConstants.tableCategory, t.toMap(),where: 'name = ?',whereArgs: [name]);
   }
 
+  Future<int> countTransactionsWithCategory(String categoryName) async {
+    final dbClient = await db;
+    final result = await dbClient.rawQuery(
+      'SELECT COUNT(*) as count FROM ${DBConstants.tableTransaction} WHERE ${DBConstants.columnCategory} = ?',
+      [categoryName],
+    );
+
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
   Future<int> deleteC(String name) async{
     return (await db).delete(DBConstants.tableCategory,where: 'name = ?', whereArgs: [name]);
   }

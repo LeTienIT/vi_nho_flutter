@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/models/categoryModel.dart';
 import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
@@ -7,6 +8,7 @@ import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/category/addCategoryView.dart';
+import 'package:vi_nho/views/category/editCategoryView.dart';
 import 'package:vi_nho/views/categoryView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
 import 'package:vi_nho/views/transaction/addTransactionView.dart';
@@ -61,6 +63,11 @@ class MyApp extends StatelessWidget {
             final transactionModel = settings.arguments as TransactionModel;
             return MaterialPageRoute(
               builder: (_) => EditTransactionView(transactionModel: transactionModel),
+            );
+          case '/category-edit':
+            final category = settings.arguments as CategoryModel;
+            return MaterialPageRoute(
+              builder: (_) => EditCategoryView(categoryModel: category,),
             );
           case '/setting':
             return MaterialPageRoute(

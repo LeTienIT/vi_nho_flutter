@@ -137,7 +137,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                                 );
                               }
                             },
-                            label: Text('Update'),
+                            label: Text('Lưu'),
                             icon: Icon(Icons.update),
                           )
                       )

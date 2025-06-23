@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/transactionModel.dart';
 
 class TransactionItem extends StatelessWidget {
   final TransactionModel transactionModel;
+  final String? path;
   final bool isActive;
   final VoidCallback onTap;
   final VoidCallback onDetailPressed;
@@ -12,6 +13,7 @@ class TransactionItem extends StatelessWidget {
   const TransactionItem({
     super.key,
     required this.transactionModel,
+    this.path,
     required this.isActive,
     required this.onTap,
     required this.onDetailPressed,
@@ -20,6 +22,7 @@ class TransactionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final inCome = transactionModel.type == 'Thu';
+
 
     return GestureDetector(
       onTap: onTap,
@@ -43,9 +46,8 @@ class TransactionItem extends StatelessWidget {
             Expanded(
               child: ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Icon(
-                  Icons.category,
-                ),
+                leading: (path!=null && path!.trim().isNotEmpty) ?
+                    CircleAvatar(backgroundImage: FileImage(File(path!)), radius: 30,) : Icon(Icons.category,),
                 title: Text(
                   '${transactionModel.category} • ${transactionModel.dateTimeString}',
                 ),

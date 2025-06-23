@@ -56,7 +56,7 @@ class AddCategoryView extends StatelessWidget{
                                 );
                               }
                             },
-                            child: Text('Thêm mới')
+                            child: Text('Thêm')
                         )
                       ],
                     )

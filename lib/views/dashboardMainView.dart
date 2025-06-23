@@ -38,7 +38,7 @@ class DashboardMainView extends StatelessWidget {
             children: [
               SummaryCard(tongThu: vm.totalIncome, tongChi: vm.totalExpense, chechLech: vm.balance, tieuDe: 'Tổng quát tháng ${DateTime.now().month}',),
               SizedBox(height: 10),
-              PieChartWidget(vm.categoryExpenseMap,tieuDeBD: 'Biểu đồ phân loại chi tiêu',),
+              PieChartWidget(vm.categoryExpenseMap,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: false,),
               SizedBox(height: 10),
               LineChartWidget(vm.dailyExpenseSpots, tieuDe: 'Biểu đồ chi tiêu theo ngày',),
               SizedBox(height: 10,),

@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class PieChartWidget extends StatelessWidget{
   Map<String, double> data;
   String tieuDeBD;
+  bool showTitle;
 
-  PieChartWidget(this.data, {this.tieuDeBD = 'Biểu đồ', super.key});
+  PieChartWidget(this.data, {this.tieuDeBD = 'Biểu đồ', super.key, this.showTitle = false});
 
   @override
   Widget build(BuildContext context) {
@@ -66,9 +67,9 @@ class PieChartWidget extends StatelessWidget{
       final percent = (entry.value / total * 100).toStringAsFixed(1);
       sections.add(
         PieChartSectionData(
-          color: colors[index % colors.length],
+          color: getCategoryColor(index),
           value: entry.value,
-          title: '$percent%',
+          title: showTitle ? '$percent%' : '',
           radius: 50,
           titleStyle: const TextStyle(
             fontSize: 14,
@@ -83,6 +84,14 @@ class PieChartWidget extends StatelessWidget{
     return sections;
   }
 
+  Color getCategoryColor(int index) {
+    if (index < _defaultColors().length) {
+      return _defaultColors()[index];
+    }
+    final hue = (index * 40) % 360;
+    return HSLColor.fromAHSL(1.0, hue.toDouble(), 0.6, 0.55).toColor();
+  }
+
   List<Color> _defaultColors() => [
     Colors.redAccent,
     Colors.green,
@@ -92,6 +101,7 @@ class PieChartWidget extends StatelessWidget{
     Colors.teal,
     Colors.brown,
     Colors.indigo,
+    Colors.pink
   ];
 
   Widget _buildLegend(Map<String, double> data, List<Color> colors) {
@@ -108,7 +118,7 @@ class PieChartWidget extends StatelessWidget{
                 width: 14,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: colors[index % colors.length],
+                  color: getCategoryColor(index),
                   shape: BoxShape.circle,
                 ),
               ),
