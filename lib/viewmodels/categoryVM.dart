@@ -66,6 +66,8 @@ class CategoryVM extends ChangeNotifier{
 
   Future<Map<String, dynamic>> updateCategory(CategoryModel t, String id, String newPath) async {
     try {
+      _isInserting = true;
+      notifyListeners();
       if (newPath.trim().isNotEmpty) {
         if (t.icon != null && t.icon!.trim().isNotEmpty) {
           await _imageService.deleteFile(t.icon!);
@@ -74,6 +76,8 @@ class CategoryVM extends ChangeNotifier{
         final original = File(newPath);
         final saved = await _imageService.compressAndSaveIcon(original);
         if (saved == null) {
+          _isInserting = false;
+          notifyListeners();
           return {'status': false, 'message': 'Lưu icon thất bại'};
         }
 
@@ -84,12 +88,18 @@ class CategoryVM extends ChangeNotifier{
 
       final index = _categoryList.indexWhere((e) => e.name == id);
       if (index == -1) {
+        _isInserting = false;
+        notifyListeners();
         return {'status': false, 'message': 'Không tìm thấy danh mục cần cập nhật'};
       }
       _categoryList[index] = t;
       notifyListeners();
+      _isInserting = false;
+      notifyListeners();
       return {'status': true, 'message': 'Cập nhật thành công'};
     } catch (e) {
+      _isInserting = false;
+      notifyListeners();
       return {'status': false, 'message': 'Lỗi: $e'};
     }
   }
@@ -100,8 +110,12 @@ class CategoryVM extends ChangeNotifier{
   }
 
   Future<Map<String, dynamic>> deleteCategory(String id) async{
+    _isInserting = true;
+    notifyListeners();
+
     final usedCount = await _db.countTransactionsWithCategory(id);
     if (usedCount > 0) {
+      _isInserting = false;
       notifyListeners();
       return{'status': false, 'message':'Không thể xóa loại giao dịch này vì nó đang được dùng bởi 1 bản ghi trong dánh sách giao dịch'};
     }
@@ -112,9 +126,12 @@ class CategoryVM extends ChangeNotifier{
       }
       await _db.deleteC(id);
       _categoryList.removeWhere((t) => t.name == id);
+      _isInserting = false;
       notifyListeners();
       return{'status': true, 'message':'Xóa thành công'};
     }
+    _isInserting = false;
+    notifyListeners();
     return{'status': false, 'message':'Xóa thất bại'};
   }
 

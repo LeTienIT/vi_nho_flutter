@@ -82,7 +82,9 @@ class _EditCategoryView extends State<EditCategoryView>{
                 ),
               ),
             ),
-          )
+          ),
+          if (categoryVM.isInserting)
+            const Center(child: CircularProgressIndicator()),
         ],
       ),
     );
