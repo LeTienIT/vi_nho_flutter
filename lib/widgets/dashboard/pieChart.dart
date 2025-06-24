@@ -28,29 +28,37 @@ class PieChartWidget extends StatelessWidget{
                 textAlign: TextAlign.center,
               ),
             ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    flex: 2,
-                    child: AspectRatio(
-                      aspectRatio: 1.3,
-                      child: PieChart(
-                        PieChartData(
-                          sections: sections,
-                          centerSpaceRadius: 40,
-                          sectionsSpace: 2,
-                          borderData: FlBorderData(show: false),
+            if(data.isNotEmpty)...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                      flex: 2,
+                      child: AspectRatio(
+                        aspectRatio: 1.3,
+                        child: PieChart(
+                          PieChartData(
+                            sections: sections,
+                            centerSpaceRadius: 40,
+                            sectionsSpace: 2,
+                            borderData: FlBorderData(show: false),
+                          ),
                         ),
-                      ),
-                    )
-                ),
-                Expanded(
-                  flex: 1,
-                  child:  _buildLegend(data, _defaultColors()),
-                ),
-              ],
-            ),
+                      )
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child:  _buildLegend(data, _defaultColors()),
+                  ),
+                ],
+              ),
+            ]
+            else
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.all(16),
+                child: Text('Không có dữ liệu',style: Theme.of(context).textTheme.bodySmall,textAlign: TextAlign.center,),
+              )
           ],
         )
 

@@ -1,13 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:vi_nho/widgets/numberForm.dart';
 
 class SummaryCard extends StatelessWidget{
   String tieuDe;
-  double tongThu, tongChi, chechLech;
+  double tongThu, tongChi; double? chechLech, percentIn, percentEx;
   
-  SummaryCard({super.key, required this.tongThu, required this.tongChi, required this.chechLech, this.tieuDe="Dashboard"});
+  SummaryCard({super.key, required this.tongThu, required this.tongChi, this.chechLech, this.percentIn, this.percentEx, this.tieuDe="Dashboard"});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +19,10 @@ class SummaryCard extends StatelessWidget{
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _summaryItem('Tổng Thu', tongThu, Colors.green),
-                _summaryItem('Tổng Chi', tongChi, Colors.red),
-                _summaryItem('Dư', chechLech, chechLech> 0 ? Colors.green : Colors.redAccent),
+                _summaryItem('Tổng Thu', tongThu, Colors.green, percentIn),
+                _summaryItem('Tổng Chi', tongChi, Colors.red, percentEx),
+                if(chechLech!=null)
+                  _summaryItem('Dư', chechLech!, chechLech!.toDouble() > 0 ? Colors.green : Colors.redAccent, null),
               ],
             ),
           ],
@@ -32,13 +31,30 @@ class SummaryCard extends StatelessWidget{
     );
   }
 
-  Widget _summaryItem(String title, double amount, Color color) {
+  Widget _summaryItem(String title, double amount, Color color, [double? percent]) {
     return Column(
       children: [
         Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 4),
         Text(NumberFormat.currency(locale: 'vi').format(amount), style: TextStyle(color: color, fontSize: 16)),
+        if (percent != null && percent.isFinite)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              _buildPercentText(percent),
+              style: TextStyle(
+                color: percent >= 0 ? Colors.red : Colors.green,
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
       ],
     );
   }
+  String _buildPercentText(double percent) {
+    final formatted = percent.abs().toStringAsFixed(1);
+    return percent >= 0 ? '↑ $formatted%' : '↓ $formatted%';
+  }
+
 }

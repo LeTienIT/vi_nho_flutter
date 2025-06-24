@@ -8,6 +8,29 @@ class TopCategory extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    if(!data.isNotEmpty) {
+      return Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  "Danh mục tiêu nhiều nhất",
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.all(16),
+                child: Text('Không có dữ liệu',style: Theme.of(context).textTheme.bodySmall,textAlign: TextAlign.center,),
+              )
+            ],
+          )
+      );
+    }
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

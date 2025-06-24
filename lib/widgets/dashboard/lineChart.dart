@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +11,30 @@ class LineChartWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final minX = data.map((e) => e.x).reduce((a, b) => a < b ? a : b).toDouble();
+    if(!data.isNotEmpty) {
+      return Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  tieuDe,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.all(16),
+                child: Text('Không có dữ liệu',style: Theme.of(context).textTheme.bodySmall,textAlign: TextAlign.center,),
+              )
+            ],
+          )
+      );
+    }
+    var minX = data.map((e) => e.x).reduce((a, b) => a < b ? a : b).toDouble();
     final maxXRaw = data.map((e) => e.x).reduce((a, b) => a > b ? a : b).toInt();
     final maxX = getSafeMaxDay(maxXRaw, DateTime.now()).toDouble();
     final List<int> daysWithData = data.map((e) => e.x.toInt()).toList();
@@ -18,11 +43,20 @@ class LineChartWidget extends StatelessWidget{
       isCurved: true,
       color: Colors.blue,
       barWidth: 2,
-      dotData: FlDotData(show: true),
+      dotData: FlDotData(
+        show: true,
+        getDotPainter: (spot, percent, bar, index) {
+          return FlDotCirclePainter(
+            radius: 4,
+            color: Colors.red,
+            strokeWidth: 3,
+          );
+        },
+      ),
       belowBarData: BarAreaData(show: true, color: Colors.blue.withOpacity(0.2)),
     );
     LineChartData chartData = LineChartData(
-      minX: minX,
+      minX: minX ,
       maxX: maxX,
       minY: 1000,
       titlesData: FlTitlesData(
@@ -34,7 +68,7 @@ class LineChartWidget extends StatelessWidget{
             showTitles: true,
             interval: 1,
             getTitlesWidget: (value, meta) {
-              if (daysWithData.contains(value.toInt()) || value.toDouble() == maxX) {
+              if (daysWithData.contains(value.toInt()) || value.toDouble() == minX || value.toDouble() == maxX) {
                 return Text('${value.toInt()}', style: TextStyle(fontSize: 10));
               }
               return const SizedBox.shrink();
@@ -52,6 +86,7 @@ class LineChartWidget extends StatelessWidget{
       gridData: FlGridData(show: true),
       borderData: FlBorderData(show: true),
       lineBarsData: [lineChartBarData],
+
     );
 
     return Card(
@@ -73,7 +108,7 @@ class LineChartWidget extends StatelessWidget{
             AspectRatio(
               aspectRatio: 1.5,
               child: LineChart(chartData),
-            )
+            ),
           ],
         ),
       ),

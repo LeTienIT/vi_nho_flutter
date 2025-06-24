@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vi_nho/core/const_running.dart';
+import 'package:vi_nho/core/tool.dart';
+import 'package:vi_nho/viewmodels/transactionVM.dart';
 
 class Menu extends StatelessWidget{
   const Menu({super.key});
-
   @override
   Widget build(BuildContext context) {
+    final transactionVM = context.watch<TransactionVM>();
+    final year = DateTime.now().year;
+    final week = Running.dashboardWeek > 0 ? Running.dashboardWeek : Tool.getWeekOfYear(DateTime.now());
     return Column(
       children: [
         SizedBox(height: 10),
@@ -39,7 +45,18 @@ class Menu extends StatelessWidget{
                       ListTile(
                         leading: Icon(Icons.dashboard),
                         title: const Text('Báo cáo theo tuần'),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/dashboard-week',
+                              (router) => false,
+                              arguments:{
+                                'week' : week,
+                                'year' : year,
+                                'transactions' : transactionVM.transactionList
+                              }
+                          );
+                        },
                       ),
                       ListTile(
                         leading: Icon(Icons.dashboard_customize),
@@ -76,4 +93,5 @@ class Menu extends StatelessWidget{
       ],
     );
   }
+
 }

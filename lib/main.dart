@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vi_nho/models/categoryModel.dart';
 import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
+import 'package:vi_nho/viewmodels/dashboard/weeklyDashBoardVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
@@ -10,6 +11,7 @@ import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/category/addCategoryView.dart';
 import 'package:vi_nho/views/category/editCategoryView.dart';
 import 'package:vi_nho/views/categoryView.dart';
+import 'package:vi_nho/views/dashboard/dashboardWeekView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
 import 'package:vi_nho/views/transaction/addTransactionView.dart';
 import 'package:vi_nho/views/transaction/editTransactionView.dart';
@@ -76,6 +78,18 @@ class MyApp extends StatelessWidget {
           case '/home':
             return MaterialPageRoute(
                 builder: (_) => DashboardMainView()
+            );
+          case '/dashboard-week':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                    create: (_) => WeeklyDashboardVM(
+                        listTransaction: args['transactions'],
+                        weekNumber: args['week'],
+                        year: args['year']
+                    ),
+                  child: DashboardWeekView(),
+                )
             );
         }
         return null;
