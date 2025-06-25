@@ -1,8 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:vi_nho/core/tool.dart';
 import 'package:vi_nho/models/transactionModel.dart';
 
-class WeeklyDashboardVM extends ChangeNotifier{
+class DashboardWeekVM extends ChangeNotifier{
   List<TransactionModel> listTransaction;
   int year;
   int weekNumber;
@@ -14,7 +15,7 @@ class WeeklyDashboardVM extends ChangeNotifier{
   late List<FlSpot> dailyChart;
   late Map<String, double> categoryChart;
   late List<TransactionModel> listTransactionSort;
-  WeeklyDashboardVM({required this.listTransaction, required this.weekNumber, required this.year}){
+  DashboardWeekVM({required this.listTransaction, required this.weekNumber, required this.year}){
     _initData();
     notifyListeners();
   }
@@ -31,7 +32,7 @@ class WeeklyDashboardVM extends ChangeNotifier{
     topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
 
     final dailyMap = <int, double>{};
-    final condition = getWeekRange(year, weekNumber);
+    final condition = Tool.getWeekRange(year, weekNumber);
     var listTransactionWeek = filterTransactionsByWeek(listTransaction, condition[0], condition[1]);
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
@@ -49,10 +50,12 @@ class WeeklyDashboardVM extends ChangeNotifier{
     dailyChart = dailySort.map((d) => FlSpot(d.toDouble(), dailyMap[d]!)).toList();
 
     listTransactionSort = listTransactionWeek..sort((a,b) => b.amount.compareTo(a.amount));
+    listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
+    listTransaction = listTransaction.take(5).toList();
 
     if(weekNumber > 1){
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;
-      final conditionLast = getWeekRange(year, weekNumber-1);
+      final conditionLast = Tool.getWeekRange(year, weekNumber-1);
       var listTransactionLastWeek = filterTransactionsByWeek(listTransaction, conditionLast[0], conditionLast[1]);
       for(var t in listTransactionLastWeek){
         if(t.type == 'Thu'){
@@ -65,20 +68,6 @@ class WeeklyDashboardVM extends ChangeNotifier{
       }
     }
 
-  }
-
-  // Lấy ngày bắt đầu và kết thúc của 1 tuần
-  List<DateTime> getWeekRange(int year, int week) {
-    final janFirst = DateTime(year, 1, 1);
-    final daysToAdd = (week - 1) * 7;
-    final approx = janFirst.add(Duration(days: daysToAdd));
-
-    final weekday = approx.weekday;
-    final monday = approx.subtract(Duration(days: weekday - 1));
-
-    final sunday = monday.add(Duration(days: 6));
-
-    return [monday, sunday];
   }
 
   // Lấy ra danh sách giao dịch trong tuần

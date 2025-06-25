@@ -1,13 +1,13 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class LineChartWidget extends StatelessWidget{
   List<FlSpot> data;
+  List<FlSpot>? data2;
   String tieuDe;
+  bool showBelow;
 
-  LineChartWidget(this.data, {this.tieuDe = 'Biểu đồ', super.key});
+  LineChartWidget(this.data, {this.tieuDe = 'Biểu đồ', super.key, this.data2, this.showBelow = true});
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,10 @@ class LineChartWidget extends StatelessWidget{
     final maxXRaw = data.map((e) => e.x).reduce((a, b) => a > b ? a : b).toInt();
     final maxX = getSafeMaxDay(maxXRaw, DateTime.now()).toDouble();
     final List<int> daysWithData = data.map((e) => e.x.toInt()).toList();
-    LineChartBarData lineChartBarData = LineChartBarData(
+    final lineChartBarData = <LineChartBarData>[LineChartBarData(
       spots: data,
       isCurved: true,
-      color: Colors.blue,
+      color: Colors.red,
       barWidth: 2,
       dotData: FlDotData(
         show: true,
@@ -50,11 +50,35 @@ class LineChartWidget extends StatelessWidget{
             radius: 4,
             color: Colors.red,
             strokeWidth: 3,
+            strokeColor: Colors.red.withValues(alpha: 0.6),
           );
         },
       ),
-      belowBarData: BarAreaData(show: true, color: Colors.blue.withOpacity(0.2)),
-    );
+      belowBarData: showBelow ? BarAreaData(show: true, color: Colors.red.withValues(alpha: 0.2)) : BarAreaData(show: false),
+    )];
+
+    if (data2 != null && data2!.isNotEmpty) {
+      lineChartBarData.add(
+        LineChartBarData(
+          spots: data2!,
+          isCurved: true,
+          color: Colors.green,
+          barWidth: 2,
+          dotData: FlDotData(
+            show: true,
+            getDotPainter: (spot, percent, bar, index) {
+              return FlDotCirclePainter(
+                radius: 4,
+                color: Colors.green,
+                strokeWidth: 3,
+                strokeColor: Colors.green.withValues(alpha: 0.6),
+              );
+            },
+          ),
+          belowBarData: showBelow ? BarAreaData(show: true, color: Colors.green.withValues(alpha: 0.2)) : BarAreaData(show: false),
+        ),
+      );
+    }
     LineChartData chartData = LineChartData(
       minX: minX ,
       maxX: maxX,
@@ -85,7 +109,7 @@ class LineChartWidget extends StatelessWidget{
       ),
       gridData: FlGridData(show: true),
       borderData: FlBorderData(show: true),
-      lineBarsData: [lineChartBarData],
+      lineBarsData: lineChartBarData,
 
     );
 
@@ -109,6 +133,8 @@ class LineChartWidget extends StatelessWidget{
               aspectRatio: 1.5,
               child: LineChart(chartData),
             ),
+            _buildLegendItem(Colors.red, 'Chi'),
+            _buildLegendItem(Colors.green, 'Thu')
           ],
         ),
       ),
@@ -123,5 +149,23 @@ class LineChartWidget extends StatelessWidget{
   int getSafeMaxDay(int currentMaxDay, DateTime ref) {
     final daysInMonth = getDaysInMonth(ref.year, ref.month);
     return (currentMaxDay < daysInMonth) ? currentMaxDay + 1 : currentMaxDay;
+  }
+
+  Widget _buildLegendItem(Color color, String label) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 30,
+          height: 6,
+          decoration: BoxDecoration(
+            color: color,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(label, style: TextStyle(fontSize: 14)),
+      ],
+    );
   }
 }

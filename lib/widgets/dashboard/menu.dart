@@ -10,7 +10,7 @@ class Menu extends StatelessWidget{
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
     final year = DateTime.now().year;
-    final week = Running.dashboardWeek > 0 ? Running.dashboardWeek : Tool.getWeekOfYear(DateTime.now());
+
     return Column(
       children: [
         SizedBox(height: 10),
@@ -51,7 +51,7 @@ class Menu extends StatelessWidget{
                               '/dashboard-week',
                               (router) => false,
                               arguments:{
-                                'week' : week,
+                                'week' : Running.dashboardWeek > 0 ? Running.dashboardWeek : Tool.getWeekOfYear(DateTime.now()),
                                 'year' : year,
                                 'transactions' : transactionVM.transactionList
                               }
@@ -61,12 +61,33 @@ class Menu extends StatelessWidget{
                       ListTile(
                         leading: Icon(Icons.dashboard_customize),
                         title: const Text('Báo cáo theo tháng'),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/dashboard-month',
+                                  (router) => false,
+                              arguments:{
+                                'month' : Running.dashboardWeek > 0 ? Running.dashboardMonth : DateTime.now().month,
+                                'year' : year,
+                                'transactions' : transactionVM.transactionList
+                              }
+                          );
+                        },
                       ),
                       ListTile(
-                        leading: Icon(Icons.dashboard_customize_outlined),
-                        title: const Text('Báo cáo theo năm'),
-                        onTap: () {},
+                        leading: Icon(Icons.calendar_month_outlined),
+                        title: const Text('Báo cáo năm'),
+                        onTap: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/dashboard-year',
+                                  (router) => false,
+                              arguments:{
+                                'year' : Running.dashboardYear > 0 ? Running.dashboardYear : year,
+                                'transactions' : transactionVM.transactionList
+                              }
+                          );
+                        },
                       ),
                     ],
                   ),

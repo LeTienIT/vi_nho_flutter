@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vi_nho/viewmodels/dashboard/weeklyDashBoardVM.dart';
+import 'package:vi_nho/viewmodels/dashboard/dashboardWeekVM.dart';
 import 'package:vi_nho/widgets/dashboard/listView.dart';
 import 'package:vi_nho/widgets/dashboard/menu.dart';
 import 'package:vi_nho/widgets/dashboard/weekPicker.dart';
@@ -14,7 +14,7 @@ class DashboardWeekView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final dashboardWeekVM = context.watch<WeeklyDashboardVM>();
+    final dashboardWeekVM = context.watch<DashboardWeekVM>();
     return Scaffold(
       appBar: AppBar(title: Text('Báo cáo tuần'),),
       drawer: Drawer(child: Menu(),),

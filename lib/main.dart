@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:vi_nho/models/categoryModel.dart';
 import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
-import 'package:vi_nho/viewmodels/dashboard/weeklyDashBoardVM.dart';
+import 'package:vi_nho/viewmodels/dashboard/dashboardMonthVM.dart';
+import 'package:vi_nho/viewmodels/dashboard/dashboardWeekVM.dart';
+import 'package:vi_nho/viewmodels/dashboard/dashboardYearVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
@@ -11,7 +13,9 @@ import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/category/addCategoryView.dart';
 import 'package:vi_nho/views/category/editCategoryView.dart';
 import 'package:vi_nho/views/categoryView.dart';
+import 'package:vi_nho/views/dashboard/dashboardMonthView.dart';
 import 'package:vi_nho/views/dashboard/dashboardWeekView.dart';
+import 'package:vi_nho/views/dashboard/dashboardYearView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
 import 'package:vi_nho/views/transaction/addTransactionView.dart';
 import 'package:vi_nho/views/transaction/editTransactionView.dart';
@@ -83,12 +87,35 @@ class MyApp extends StatelessWidget {
             final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(
                 builder: (_) => ChangeNotifierProvider(
-                    create: (_) => WeeklyDashboardVM(
+                    create: (_) => DashboardWeekVM(
                         listTransaction: args['transactions'],
                         weekNumber: args['week'],
                         year: args['year']
                     ),
                   child: DashboardWeekView(),
+                )
+            );
+          case '/dashboard-month':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) => DashboardMonthVM(
+                      listTransaction: args['transactions'],
+                      monthNumber: args['month'],
+                      year: args['year']
+                  ),
+                  child: DashboardMonthView(),
+                )
+            );
+          case '/dashboard-year':
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) => DashboardYearVM(
+                      listTransaction: args['transactions'],
+                      year: args['year']
+                  ),
+                  child: DashboardYearView(),
                 )
             );
         }

@@ -29,6 +29,8 @@ dependencies:
   flutter_image_compress: ^2.1.0
   image: ^4.0.17
 
+  numberpicker: ^2.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

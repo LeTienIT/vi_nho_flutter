@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 
 class SummaryCard extends StatelessWidget{
   String tieuDe;
-  double tongThu, tongChi; double? chechLech, percentIn, percentEx;
+  double tongThu, tongChi; double? chechLech, percentIn, percentEx, balancePercent;
   
-  SummaryCard({super.key, required this.tongThu, required this.tongChi, this.chechLech, this.percentIn, this.percentEx, this.tieuDe="Dashboard"});
+  SummaryCard({super.key, required this.tongThu, required this.tongChi, this.chechLech, this.percentIn, this.percentEx, this.balancePercent, this.tieuDe="Dashboard"});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class SummaryCard extends StatelessWidget{
                 _summaryItem('Tổng Thu', tongThu, Colors.green, percentIn),
                 _summaryItem('Tổng Chi', tongChi, Colors.red, percentEx),
                 if(chechLech!=null)
-                  _summaryItem('Dư', chechLech!, chechLech!.toDouble() > 0 ? Colors.green : Colors.redAccent, null),
+                  _summaryItem('Dư', chechLech!, chechLech!.toDouble() > 0 ? Colors.green : Colors.redAccent, balancePercent),
               ],
             ),
           ],
