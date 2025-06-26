@@ -36,7 +36,7 @@ class DashboardYearVM extends ChangeNotifier{
     final currentList = listTransaction.where((t) => t.dateTime.year == year).toList();
     listTransactionSort = currentList..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransaction = listTransaction.take(5).toList();
+    listTransactionSort = listTransactionSort.take(5).toList();
 
     final monthExMap = <int, double>{};
     final monthInMap = <int, double>{};

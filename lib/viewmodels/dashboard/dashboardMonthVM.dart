@@ -31,7 +31,7 @@ class DashboardMonthVM extends ChangeNotifier{
     final currentList = listTransaction.where((t) => t.dateTime.month == monthNumber && t.dateTime.year == year).toList();
     listTransactionSort = currentList..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransaction = listTransaction.take(5).toList();
+    listTransactionSort = listTransactionSort.take(5).toList();
     final dailyMap = <int, double>{};
     for(var tx in currentList){
       if (tx.type == 'Thu') {

@@ -1,6 +1,6 @@
 class DBConstants{
   static const String dbName = 'database_chinote.db';
-  static const int dbVersion = 2;
+  static const int dbVersion = 1;
 
   static const String tableTransaction = 'transactions';
   static const String tableCategory = "category";

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:vi_nho/models/filterModel.dart';
+import 'package:vi_nho/viewmodels/categoryVM.dart';
 
 import '../../viewmodels/filterVM.dart';
 
@@ -12,6 +14,7 @@ class FilterValueInput extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<CategoryVM>();
     if(field == null) return const Text('Chọn trường');
 
     switch(field!){
@@ -65,15 +68,15 @@ class FilterValueInput extends StatelessWidget{
         );
 
       case FilterField.category:
-        final categories = ['Ăn uống', 'Di chuyển', 'Giải trí', 'Khác'];
+        final categories = vm.categoryList;
         return DropdownButtonFormField<String>(
           value: filterVM.inputValue,
           hint: const Text('Chọn loại'),
           onChanged: (value) => filterVM.setInputValue(value),
           items: categories.map((cat) {
             return DropdownMenuItem(
-              value: cat,
-              child: Text(cat),
+              value: cat.name,
+              child: Text(cat.name),
             );
           }).toList(),
         );

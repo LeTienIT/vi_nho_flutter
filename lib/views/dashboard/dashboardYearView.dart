@@ -46,17 +46,12 @@ class DashboardYearView extends StatelessWidget{
               balancePercent: dashboardYearVM.balancePercent,
             ),
 
-            CardTitle(
-              label: 'TB mỗi tháng thu',
-              content: NumberFormat.currency(locale: 'vi').format(dashboardYearVM.averageIn),
-              labelStyle: Theme.of(context).textTheme.titleSmall,
-              contentStyle: Theme.of(context).textTheme.headlineSmall,
-            ),
-            CardTitle(
-              label: 'TB mỗi tháng tiêu',
-              content: NumberFormat.currency(locale: 'vi').format(dashboardYearVM.averageEx),
-              labelStyle: Theme.of(context).textTheme.titleSmall,
-              contentStyle: Theme.of(context).textTheme.headlineSmall,
+            SummaryCard(
+              tieuDe1: 'TB mỗi tháng thu',
+              tieuDe2: 'TB mỗi tháng tiêu',
+              tongThu: dashboardYearVM.averageIn,
+              tongChi: dashboardYearVM.averageEx,
+              tieuDe: 'Trung bình mỗi tháng',
             ),
 
             SizedBox(height: 10),

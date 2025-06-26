@@ -1,60 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vi_nho/widgets/dashboard/summaryItem.dart';
 
-class SummaryCard extends StatelessWidget{
-  String tieuDe;
-  double tongThu, tongChi; double? chechLech, percentIn, percentEx, balancePercent;
-  
-  SummaryCard({super.key, required this.tongThu, required this.tongChi, this.chechLech, this.percentIn, this.percentEx, this.balancePercent, this.tieuDe="Dashboard"});
+class SummaryCard extends StatelessWidget {
+  final String tieuDe1, tieuDe2, tieuDe3;
+  final String tieuDe;
+  final double tongThu, tongChi;
+  final double? chechLech, percentIn, percentEx, balancePercent;
+
+  const SummaryCard({
+    super.key,
+    this.tieuDe1 = 'Tổng thu',
+    this.tieuDe2 = 'Tổng chi',
+    this.tieuDe3 = 'Dư',
+    required this.tongThu,
+    required this.tongChi,
+    this.chechLech,
+    this.percentIn,
+    this.percentEx,
+    this.balancePercent,
+    this.tieuDe = "Dashboard",
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _summaryItem('Tổng Thu', tongThu, Colors.green, percentIn),
-                _summaryItem('Tổng Chi', tongChi, Colors.red, percentEx),
-                if(chechLech!=null)
-                  _summaryItem('Dư', chechLech!, chechLech!.toDouble() > 0 ? Colors.green : Colors.redAccent, balancePercent),
-              ],
-            ),
-          ],
-        )
+    return SizedBox(
+      width: double.infinity, // Card full chiều ngang
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                tieuDe,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 24,
+                runSpacing: 16,
+                alignment: WrapAlignment.center,
+                children: [
+                  SummaryItem(tieuDe1, tongThu, Colors.green, percentIn),
+                  SummaryItem(tieuDe2, tongChi, Colors.red, percentEx),
+                  if (chechLech != null)
+                    SummaryItem(
+                      tieuDe3,
+                      chechLech!,
+                      chechLech! > 0 ? Colors.green : Colors.redAccent,
+                      balancePercent,
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _summaryItem(String title, double amount, Color color, [double? percent]) {
-    return Column(
-      children: [
-        Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-        SizedBox(height: 4),
-        Text(NumberFormat.currency(locale: 'vi').format(amount), style: TextStyle(color: color, fontSize: 16)),
-        if (percent != null && percent.isFinite)
-          Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              _buildPercentText(percent),
-              style: TextStyle(
-                color: percent >= 0 ? Colors.red : Colors.green,
-                fontSize: 14,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-      ],
-    );
+  String formatCompactCurrency(double value) {
+    if (value >= 1e9) {
+      return '${(value / 1e9).toStringAsFixed(1)}B'; // Tỷ
+    } else if (value >= 1e6) {
+      return '${(value / 1e6).toStringAsFixed(1)}M'; // Triệu
+    } else if (value >= 1e3) {
+      return '${(value / 1e3).toStringAsFixed(0)}K'; // Nghìn
+    } else {
+      return value.toStringAsFixed(0); // Số nhỏ
+    }
   }
-  String _buildPercentText(double percent) {
-    final formatted = percent.abs().toStringAsFixed(1);
-    return percent >= 0 ? '↑ $formatted%' : '↓ $formatted%';
-  }
-
 }

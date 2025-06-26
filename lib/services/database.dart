@@ -30,39 +30,6 @@ class DatabaseService{
 
   Future<void> _onCreate(Database db, int v) async{
     await db.execute('''
-    CREATE TABLE ${DBConstants.tableTransaction} (
-        ${DBConstants.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${DBConstants.columnType} TEXT,
-        ${DBConstants.columnAmount} REAL,
-        ${DBConstants.columnCategory} TEXT,
-        ${DBConstants.columnNote} TEXT,
-        ${DBConstants.columnDateTime} TEXT
-        )
-    ''');
-  }
-
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
-    if(oldVersion < newVersion){
-      await db.execute('''
-      CREATE TABLE ${DBConstants.tableCategory} (
-        ${DBConstants.columnName} TEXT PRIMARY KEY,
-        ${DBConstants.columnIcon} TEXT,
-        ${DBConstants.columnColor} TEXT,
-        ${DBConstants.columnNote} TEXT
-      )
-    ''');
-
-      // Thêm dữ liệu mẫu
-      await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Ăn uống'});
-      await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Giải trí'});
-      await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Lương'});
-      await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Hóa đơn'});
-
-      // Xóa bảng transaction cũ
-      await db.execute('DROP TABLE IF EXISTS ${DBConstants.tableTransaction}');
-
-      // Tạo bảng transaction mới có khóa ngoại
-      await db.execute('''
       CREATE TABLE ${DBConstants.tableTransaction} (
         ${DBConstants.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${DBConstants.columnType} TEXT,
@@ -73,6 +40,26 @@ class DatabaseService{
         FOREIGN KEY(${DBConstants.columnCategory}) REFERENCES ${DBConstants.tableCategory}(name)
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE ${DBConstants.tableCategory} (
+        ${DBConstants.columnName} TEXT PRIMARY KEY,
+        ${DBConstants.columnIcon} TEXT,
+        ${DBConstants.columnColor} TEXT,
+        ${DBConstants.columnNote} TEXT
+      )
+    ''');
+
+    // Thêm dữ liệu mẫu
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Ăn uống'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Giải trí'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Lương'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Hóa đơn'});
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
+    if(oldVersion < newVersion){
+
     }
   }
 

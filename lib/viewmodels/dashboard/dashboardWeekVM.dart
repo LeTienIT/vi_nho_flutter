@@ -51,7 +51,7 @@ class DashboardWeekVM extends ChangeNotifier{
 
     listTransactionSort = listTransactionWeek..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransaction = listTransaction.take(5).toList();
+    listTransactionSort = listTransactionSort.take(5).toList();
 
     if(weekNumber > 1){
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;

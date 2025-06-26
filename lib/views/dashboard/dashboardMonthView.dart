@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/viewmodels/dashboard/dashboardMonthVM.dart';
 import 'package:vi_nho/widgets/dashboard/monthPicker.dart';
+import 'package:vi_nho/widgets/dashboard/summaryItem.dart';
 
 import '../../widgets/dashboard/cardTitle.dart';
 import '../../widgets/dashboard/lineChart.dart';
@@ -44,17 +45,12 @@ class DashboardMonthView extends StatelessWidget{
               percentEx: dashboardMonthVM.percentEx,
             ),
 
-            CardTitle(
-              label: 'TB một ngày thu',
-              content: NumberFormat.currency(locale: 'vi').format(dashboardMonthVM.averageIn),
-              labelStyle: Theme.of(context).textTheme.titleSmall,
-              contentStyle: Theme.of(context).textTheme.headlineSmall,
-            ),
-            CardTitle(
-              label: 'TB một lần tiêu',
-              content: NumberFormat.currency(locale: 'vi').format(dashboardMonthVM.averageEx),
-              labelStyle: Theme.of(context).textTheme.titleSmall,
-              contentStyle: Theme.of(context).textTheme.headlineSmall,
+            SummaryCard(
+              tieuDe1: 'TB mỗi ngày thu',
+              tieuDe2: 'TB mỗi lần tiêu',
+              tongThu: dashboardMonthVM.averageIn,
+              tongChi: dashboardMonthVM.averageEx,
+              tieuDe: 'Trung bình mỗi ngày',
             ),
 
             SizedBox(height: 10),
