@@ -20,8 +20,9 @@ class PieChartWidget extends StatelessWidget{
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
+            Container(
+              padding: EdgeInsets.all(5),
+              margin: EdgeInsets.only(bottom: 15),
               child: Text(
                 tieuDeBD,
                 style: Theme.of(context).textTheme.titleLarge,
@@ -35,13 +36,17 @@ class PieChartWidget extends StatelessWidget{
                   Expanded(
                       flex: 2,
                       child: AspectRatio(
-                        aspectRatio: 1.3,
-                        child: PieChart(
-                          PieChartData(
-                            sections: sections,
-                            centerSpaceRadius: 40,
-                            sectionsSpace: 2,
-                            borderData: FlBorderData(show: false),
+                        aspectRatio: 1.1,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          margin: EdgeInsets.only(bottom: 15),
+                          child: PieChart(
+                            PieChartData(
+                              sections: sections,
+                              centerSpaceRadius: 40,
+                              sectionsSpace: 2,
+                              borderData: FlBorderData(show: false),
+                            ),
                           ),
                         ),
                       )

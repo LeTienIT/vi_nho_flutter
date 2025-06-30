@@ -34,6 +34,8 @@ class DashboardMainViewModel extends ChangeNotifier{
   double totalExpense = 0;
   double get balance => totalIncome - totalExpense;
 
+  late double percentIn, percentEx;
+
   Map<String, double> categoryExpenseMap = {}; // PieChart
   List<FlSpot> dailyExpenseSpots = []; // LineChart
   List<MapEntry<String, double>> topCategories = [];
@@ -49,6 +51,7 @@ class DashboardMainViewModel extends ChangeNotifier{
 
     totalIncome = 0;
     totalExpense = 0;
+    percentEx = 0.0; percentIn = 0.0;
     categoryExpenseMap.clear();
 
     final dailyMap = <int, double>{}; // day -> amount
@@ -77,5 +80,19 @@ class DashboardMainViewModel extends ChangeNotifier{
     // Top category
     topCategories = categoryExpenseMap.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
+
+    if(now.month > 1){
+      double totalIncomeLast = 0.0, totalExpenseLast = 0.0;
+      final lastList = transactionList!.where((t) => t.dateTime.month == now.month-1 && t.dateTime.year == now.year);
+      for(var t in lastList){
+        if(t.type == 'Thu'){
+          totalIncomeLast+=t.amount;
+        }else{
+          totalExpenseLast+=t.amount;
+        }
+      }
+      percentIn = ((totalIncome - totalIncomeLast) / totalIncomeLast ) * 100;
+      percentEx = ((totalExpense - totalExpenseLast) / totalExpenseLast ) * 100;
+    }
   }
 }

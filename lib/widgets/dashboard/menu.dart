@@ -103,6 +103,18 @@ class Menu extends StatelessWidget{
                   ),
                 ],
               ),
+              ExpansionTile(
+                title: Text('Kế hoạch tiết kiệm'),
+                leading: Icon(Icons.savings),
+                childrenPadding: EdgeInsets.only(left: 16),
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.queue_play_next),
+                    title: const Text('Chọn gói tiết kiệm'),
+                    onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/saving-plan', (route) => false),
+                  ),
+                ],
+              ),
               ListTile(
                 leading: const Icon(Icons.settings),
                 title: const Text('Cài đặt giao diện'),

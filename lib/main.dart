@@ -17,6 +17,7 @@ import 'package:vi_nho/views/dashboard/dashboardMonthView.dart';
 import 'package:vi_nho/views/dashboard/dashboardWeekView.dart';
 import 'package:vi_nho/views/dashboard/dashboardYearView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
+import 'package:vi_nho/views/saving_plane/selectSavingPlanView.dart';
 import 'package:vi_nho/views/transaction/addTransactionView.dart';
 import 'package:vi_nho/views/transaction/editTransactionView.dart';
 import 'package:vi_nho/views/settingView.dart';
@@ -117,6 +118,10 @@ class MyApp extends StatelessWidget {
                   ),
                   child: DashboardYearView(),
                 )
+            );
+          case '/saving-plan':
+            return MaterialPageRoute(
+              builder: (_) => SelectSavingPlanView(),
             );
         }
         return null;
