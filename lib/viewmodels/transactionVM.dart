@@ -33,7 +33,7 @@ class TransactionVM extends ChangeNotifier{
   Future<void> insertTransaction(TransactionModel t) async{
     final id = await _db.insert(t);
     t.id = id;
-    _transactionList.add(t);
+    _transactionList.insert(0,t);
     if(_filterCondition == null){
       _transactionFilter = List.from(_transactionList);
       notifyListeners();

@@ -80,8 +80,8 @@ class LineChartWidget extends StatelessWidget{
       );
     }
     LineChartData chartData = LineChartData(
-      minX: minX ,
-      maxX: maxX,
+      // minX: minX ,
+      // maxX: maxX,
       minY: 1000,
       titlesData: FlTitlesData(
         topTitles: AxisTitles(
@@ -92,10 +92,7 @@ class LineChartWidget extends StatelessWidget{
             showTitles: true,
             interval: 1,
             getTitlesWidget: (value, meta) {
-              if (daysWithData.contains(value.toInt()) || value.toDouble() == minX || value.toDouble() == maxX) {
-                return Text('${value.toInt()}', style: TextStyle(fontSize: 10));
-              }
-              return const SizedBox.shrink();
+              return Text('${value.toInt()}', style: TextStyle(fontSize: 10));
             }
           ),
         ),
@@ -133,8 +130,14 @@ class LineChartWidget extends StatelessWidget{
               aspectRatio: 1.5,
               child: LineChart(chartData),
             ),
-            _buildLegendItem(Colors.red, 'Chi'),
-            _buildLegendItem(Colors.green, 'Thu')
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 16,
+              children: [
+                _buildLegendItem(Colors.red, 'Chi'),
+                _buildLegendItem(Colors.green, 'Thu'),
+              ],
+            )
           ],
         ),
       ),
@@ -153,7 +156,6 @@ class LineChartWidget extends StatelessWidget{
 
   Widget _buildLegendItem(Color color, String label) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
