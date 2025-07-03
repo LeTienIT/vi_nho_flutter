@@ -10,6 +10,7 @@ import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/transaction/categoryPicker.dart';
 import 'package:vi_nho/widgets/sessionTitle.dart';
 
+import '../../viewmodels/planVM.dart';
 import '../../widgets/dateTimeInput.dart';
 import '../../widgets/numberForm.dart';
 import '../../widgets/textForm.dart';
@@ -29,7 +30,6 @@ class _AddTransactionView extends State<AddTransactionView>{
   final TextEditingController _note = TextEditingController();
   DateTime? dateTime;
 
-
   @override
   void dispose() {
     super.dispose();
@@ -40,6 +40,11 @@ class _AddTransactionView extends State<AddTransactionView>{
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<PlanVM>();
+    int planID = -1;
+    if(vm.checkOpenPlan()['rs'] == 1){
+      planID = vm.checkOpenPlan()['id']!;
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -64,6 +69,7 @@ class _AddTransactionView extends State<AddTransactionView>{
                       _type = value;
                     });
                   },
+                  planID: planID,
                 ),
 
                 SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
@@ -98,12 +104,13 @@ class _AddTransactionView extends State<AddTransactionView>{
                                 return;
                               }
                             }
-                            TransactionModel t = new TransactionModel(
+                            TransactionModel t = TransactionModel(
                                 type: _type!,
                                 amount: double.parse(_amount.text),
                                 category: context.read<CategoryVM>().categorySelect!.name,
                                 note: _note.text,
-                                dateTime: dateTime!
+                                dateTime: dateTime!,
+                                savingID: planID
                             );
 
                             try {

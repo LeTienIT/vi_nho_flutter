@@ -8,6 +8,7 @@ import 'package:vi_nho/viewmodels/dashboard/dashboardWeekVM.dart';
 import 'package:vi_nho/viewmodels/dashboard/dashboardYearVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
+import 'package:vi_nho/viewmodels/planVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/category/addCategoryView.dart';
@@ -17,7 +18,8 @@ import 'package:vi_nho/views/dashboard/dashboardMonthView.dart';
 import 'package:vi_nho/views/dashboard/dashboardWeekView.dart';
 import 'package:vi_nho/views/dashboard/dashboardYearView.dart';
 import 'package:vi_nho/views/dashboardMainView.dart';
-import 'package:vi_nho/views/saving_plane/selectSavingPlanView.dart';
+import 'package:vi_nho/views/saving_plane/planView.dart';
+import 'package:vi_nho/views/saving_plane/savingPlanView.dart';
 import 'package:vi_nho/views/transaction/addTransactionView.dart';
 import 'package:vi_nho/views/transaction/editTransactionView.dart';
 import 'package:vi_nho/views/settingView.dart';
@@ -40,6 +42,7 @@ void main() async{
           create: (_) => DashboardMainViewModel(null),
           update: (_, transactionVM, previous) => previous!..updateData(transactionVM),
         ),
+        ChangeNotifierProvider(create: (_) => PlanVM()..initData()),
       ],
       child: const MyApp(),
     )
@@ -121,7 +124,11 @@ class MyApp extends StatelessWidget {
             );
           case '/saving-plan':
             return MaterialPageRoute(
-              builder: (_) => SelectSavingPlanView(),
+              builder: (_) => SavingPlanView(),
+            );
+          case '/plan-list':
+            return MaterialPageRoute(
+              builder: (_) => PlanView(),
             );
         }
         return null;

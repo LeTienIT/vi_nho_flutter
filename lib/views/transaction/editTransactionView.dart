@@ -6,6 +6,7 @@ import 'package:vi_nho/widgets/transaction/categoryPicker.dart';
 
 import '../../core/input_validators.dart';
 import '../../viewmodels/categoryVM.dart';
+import '../../viewmodels/planVM.dart';
 import '../../viewmodels/transactionVM.dart';
 import '../../widgets/dateTimeInput.dart';
 import '../../widgets/numberForm.dart';
@@ -52,6 +53,11 @@ class _EditTransactionView extends State<EditTransactionView> {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<PlanVM>();
+    int planID = -1;
+    if(vm.checkOpenPlan()['rs'] == 1){
+      planID = vm.checkOpenPlan()['id']!;
+    }
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -76,6 +82,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                         _type = value;
                       });
                     },
+                    planID: planID,
                   ),
 
                   SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
@@ -115,7 +122,8 @@ class _EditTransactionView extends State<EditTransactionView> {
                                   amount: double.parse(_amount.text),
                                   category: context.read<CategoryVM>().categorySelect!.name,
                                   note: _note.text,
-                                  dateTime: dateTime!
+                                  dateTime: dateTime!,
+                                  savingID: widget.transactionModel.savingID
                               );
 
                               try {

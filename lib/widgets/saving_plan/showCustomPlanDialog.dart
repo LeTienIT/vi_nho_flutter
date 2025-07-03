@@ -118,6 +118,10 @@ class ShowCustomPlanDialog {
                     showError("Chọn ngày chưa đủ");
                     return;
                   }
+                  if (endDate!.isBefore(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day))) {
+                    showError("Hiện tại chưa thể tạo kế hoạch trong quá khứ. Hãy chọn từ ngày kết thúc ở hiện tại");
+                    return;
+                  }
                   if (startDate!.isAfter(endDate!)) {
                     showError("Ngày bắt đầu phải trước ngày kết thúc");
                     return;

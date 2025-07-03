@@ -22,13 +22,26 @@ class DashboardMainViewModel extends ChangeNotifier{
 
   void updateData(TransactionVM vm) {
     _transactionVM = vm;
-    if(_transactionVM!.isLoad && !isLoading){
-      transactionList =_transactionVM!.transactionList;
+    if(_transactionVM!.isLoad){
+      transactionList =_transactionVM!.listCore;
       _generateDashboardData();
       isLoading = true;
       notifyListeners();
     }
   }
+  void _onTransactionChanged() {
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    if(_transactionVM!=null){
+      _transactionVM!.removeListener(_onTransactionChanged);
+    }
+
+    super.dispose();
+  }
+
 
   double totalIncome = 0;
   double totalExpense = 0;

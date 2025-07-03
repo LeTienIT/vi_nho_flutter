@@ -115,22 +115,16 @@ class _TransactionListView extends State<TransactionListView>{
           ),
         ],
       ),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.clear,
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.add),
-              label: 'Thêm giao dịch',
-              onTap: (){
-                if (categoryVM.categorySelect == null) {
-                  categoryVM.setSelect(categoryVM.categoryList.first);
-                }
-                Navigator.pushNamed(context, '/transaction-add');
-              }
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: (){
+            if (categoryVM.categorySelect == null) {
+              categoryVM.setSelect(categoryVM.categoryList.first);
+            }
+            Navigator.pushNamed(context, '/transaction-add');
+          }
       ),
     );
   }
+
 }

@@ -2,7 +2,7 @@ name: vi_nho
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.0.0+5
+version: 1.0.0+6
 
 environment:
   sdk: ^3.7.2
@@ -31,6 +31,10 @@ dependencies:
 
   numberpicker: ^2.1.1
 
+  lottie: ^2.6.0
+
+  table_calendar: ^3.0.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -39,4 +43,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/piggy-1.json
 

@@ -53,7 +53,7 @@ class Menu extends StatelessWidget{
                               arguments:{
                                 'week' : Running.dashboardWeek > 0 ? Running.dashboardWeek : Tool.getWeekOfYear(DateTime.now()),
                                 'year' : year,
-                                'transactions' : transactionVM.transactionList
+                                'transactions' : transactionVM.listCore
                               }
                           );
                         },
@@ -69,7 +69,7 @@ class Menu extends StatelessWidget{
                               arguments:{
                                 'month' : Running.dashboardWeek > 0 ? Running.dashboardMonth : DateTime.now().month,
                                 'year' : year,
-                                'transactions' : transactionVM.transactionList
+                                'transactions' : transactionVM.listCore
                               }
                           );
                         },
@@ -84,7 +84,7 @@ class Menu extends StatelessWidget{
                                   (router) => false,
                               arguments:{
                                 'year' : Running.dashboardYear > 0 ? Running.dashboardYear : year,
-                                'transactions' : transactionVM.transactionList
+                                'transactions' : transactionVM.listCore
                               }
                           );
                         },
@@ -107,6 +107,7 @@ class Menu extends StatelessWidget{
                 title: Text('Kế hoạch tiết kiệm'),
                 leading: Icon(Icons.savings),
                 childrenPadding: EdgeInsets.only(left: 16),
+                initiallyExpanded: true,
                 children: [
                   ListTile(
                     leading: const Icon(Icons.queue_play_next),

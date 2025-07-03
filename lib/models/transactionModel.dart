@@ -10,6 +10,7 @@ class TransactionModel{
   String category;
   String? note;
   DateTime dateTime;
+  int? savingID;
 
   TransactionModel({
       this.id,
@@ -17,7 +18,9 @@ class TransactionModel{
       required this.amount,
       required this.category,
       this.note = '...',
-      required this.dateTime});
+      required this.dateTime,
+      this.savingID = -1,
+  });
 
   Map<String, dynamic> toMap() => {
     DBConstants.columnId : id,
@@ -25,7 +28,8 @@ class TransactionModel{
     DBConstants.columnAmount: amount,
     DBConstants.columnCategory: category,
     DBConstants.columnNote: note,
-    DBConstants.columnDateTime: dateTime.toIso8601String()
+    DBConstants.columnDateTime: dateTime.toIso8601String(),
+    DBConstants.columnSavingId: savingID,
   };
 
   factory TransactionModel.fromMap(Map<String, dynamic> transaction){
@@ -35,7 +39,8 @@ class TransactionModel{
         amount: transaction[DBConstants.columnAmount] as double,
         category: transaction[DBConstants.columnCategory] as String,
         note: (transaction[DBConstants.columnNote]?.isEmpty ?? true) ? '...' : transaction[DBConstants.columnNote]!,
-        dateTime: DateTime.parse(transaction[DBConstants.columnDateTime] as String)
+        dateTime: DateTime.parse(transaction[DBConstants.columnDateTime] as String),
+        savingID: transaction[DBConstants.columnSavingId] as int,
     );
   }
 

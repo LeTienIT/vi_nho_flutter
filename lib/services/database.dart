@@ -3,6 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:vi_nho/core/db_constants.dart';
 import 'package:vi_nho/models/categoryModel.dart';
+import 'package:vi_nho/models/planModel.dart';
 import 'package:vi_nho/models/transactionModel.dart';
 class DatabaseService{
   static final DatabaseService _instance = DatabaseService._internal();
@@ -59,7 +60,28 @@ class DatabaseService{
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
     if(oldVersion < newVersion){
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${DBConstants.tableSaving} (
+        ${DBConstants.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${DBConstants.columnNamePlan} TEXT,
+        ${DBConstants.columnStartDate} TEXT,
+        ${DBConstants.columnEndDate} TEXT,
+        ${DBConstants.columnChuKy} TEXT,
+        ${DBConstants.columnTongTien} TEXT,
+        ${DBConstants.columnTienChuKy} TEXT,
+        ${DBConstants.columnHoanThanh} INTEGER
+      )
+    ''');
 
+    //   await db.execute('''
+    //   ALTER TABLE ${DBConstants.tableTransaction}
+    //   ADD COLUMN ${DBConstants.columnSavingId} INTEGER DEFAULT -1
+    // ''');
+
+      await db.execute('''
+      ALTER TABLE ${DBConstants.tableSaving}
+      ADD COLUMN ${DBConstants.columnThanhCong} INTEGER DEFAULT -1
+    ''');
     }
   }
 
@@ -105,5 +127,23 @@ class DatabaseService{
 
   Future<int> deleteC(String name) async{
     return (await db).delete(DBConstants.tableCategory,where: 'name = ?', whereArgs: [name]);
+  }
+
+  Future<List<PlanModel>> selectAllPlan() async{
+    final rs = await (await db).query(DBConstants.tableSaving);
+    return rs.map( (t) => PlanModel.fromMap(t) ).toList();
+  }
+
+  Future<int> insertP(PlanModel t) async{
+    return (await db).insert(DBConstants.tableSaving, t.toMap());
+  }
+
+  Future<int> updateP(PlanModel t, int id) async{
+    return (await db).update(DBConstants.tableSaving, t.toMap(),where: 'id = ?',whereArgs: [id]);
+  }
+
+  Future<int> deleteP(int id) async{
+    (await db).delete(DBConstants.tableTransaction,where: '${DBConstants.columnSavingId} = ?', whereArgs: [id]);
+    return (await db).delete(DBConstants.tableSaving,where: '${DBConstants.columnId} = ?', whereArgs: [id]);
   }
 }

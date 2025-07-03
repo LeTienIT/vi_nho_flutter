@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vi_nho/widgets/sessionTitle.dart';
 
 class TypeSelector extends StatelessWidget {
   final String? selected;
   final ValueChanged<String?> onChanged;
-  const TypeSelector({super.key, required this.selected, required this.onChanged});
+  int planID;
+  TypeSelector({super.key, required this.selected, required this.onChanged, this.planID=-1});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +26,12 @@ class TypeSelector extends StatelessWidget {
               title: Text('Tiền ra'),
               groupValue: selected,
               onChanged: onChanged
+          ),
+          RadioListTile(
+            value: 'Tiết kiệm',
+            title: Text('Tiết kiệm'),
+            groupValue: selected,
+            onChanged: onChanged,
           ),
         ],
       ),
