@@ -6,8 +6,9 @@ class NumberForm extends StatelessWidget {
   final String title;
   final String? hint;
   final String? Function(String?)? validator;
+  bool readOnly;
 
-  const NumberForm({super.key, required this.amount, this.validator, required this.title, this.hint=''});
+  NumberForm({super.key, required this.amount, this.validator, required this.title, this.hint='', this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class NumberForm extends StatelessWidget {
               hintText: hint
           ),
           validator: validator,
+          readOnly:  readOnly,
         )
     );
   }

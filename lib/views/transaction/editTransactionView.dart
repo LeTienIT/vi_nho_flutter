@@ -32,7 +32,7 @@ class _EditTransactionView extends State<EditTransactionView> {
   late final TextEditingController _note;
   late DateTime? dateTime;
   late final CategoryVM categoryVM;
-
+  late bool _showDiaLog;
   @override
   void initState(){
     super.initState();
@@ -42,6 +42,7 @@ class _EditTransactionView extends State<EditTransactionView> {
     _amount = TextEditingController(text: widget.transactionModel.amount.toString());
     _note = TextEditingController(text: widget.transactionModel.note);
     dateTime = widget.transactionModel.dateTime;
+    _showDiaLog = false;
   }
 
   @override
@@ -54,9 +55,42 @@ class _EditTransactionView extends State<EditTransactionView> {
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PlanVM>();
+    if(!vm.isLoad){
+      return Center(child: CircularProgressIndicator(),);
+    }
     int planID = -1;
+    bool enable = true;
     if(vm.checkOpenPlan()['rs'] == 1){
       planID = vm.checkOpenPlan()['id']!;
+      if(planID != widget.transactionModel.savingID){
+        planID = -1;
+      }
+    }
+
+    if(widget.transactionModel.type == 'Tiết kiệm'){
+      final p = vm.getP(widget.transactionModel.savingID!);
+      final now = DateTime.now();
+      if(p.ngayKT.isBefore(DateTime(now.year,now.month,now.day))){
+        enable = false;
+        if(!_showDiaLog)
+        {
+          _showDiaLog = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+                context: context,
+                builder: (_){
+                  return AlertDialog(
+                    title: Text('Thông báo'),
+                    content: Text('Giao dịch này thuộc 1 gòi tiết kiệm.\n Và gói tiết kiệm hiện tại đã kết thúc (hết hạn).\nVì vậy không thể chỉnh sửa.'),
+                    actions: [
+                      IconButton(onPressed: ()=>Navigator.of(context).pop(), icon: Icon(Icons.close)),
+                    ],
+                  );
+                }
+            );
+          });
+        }
+      }
     }
     return Scaffold(
         appBar: AppBar(
@@ -83,19 +117,20 @@ class _EditTransactionView extends State<EditTransactionView> {
                       });
                     },
                     planID: planID,
+                    enable: enable,
                   ),
 
                   SessionTitle(title: 'Loại', subtitle: 'Phân loại để quản lý chi tiêu',),
-                  CategoryPicker(),
+                  CategoryPicker(enable: enable,),
 
                   SessionTitle(title: 'Số lượng', subtitle: 'Số tiền chi trả cho việc này',),
-                  NumberForm(amount: _amount, title: 'Số tiền', hint: 'VD: 20.000', validator: InputValidators.amountValidator,),
+                  NumberForm(amount: _amount, title: 'Số tiền', hint: 'VD: 20.000', validator: InputValidators.amountValidator,readOnly: !enable,),
 
                   SessionTitle(title: 'Note',subtitle: 'Ghi chú để xem lại',),
-                  TextForm(category: _note, title: 'Ghi chú', hint: 'ghi lại nhưng gì cần'),
+                  TextForm(category: _note, title: 'Ghi chú', hint: 'ghi lại nhưng gì cần', readOnly: !enable,),
 
                   SessionTitle(title: 'Thời gian',subtitle: 'Ngày thực hiện',),
-                  DateTimeInput(dateTime: dateTime, onPressed:  (newDate) { setState(() {dateTime = newDate;});}),
+                  DateTimeInput(dateTime: dateTime, enable: enable, onPressed:  (newDate) { setState(() {dateTime = newDate;});}),
 
                   Divider(),
 
@@ -103,7 +138,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                     children: [
                       Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: () async{
+                            onPressed: enable ? () async{
                               if(_formKey.currentState!.validate()){
                                 if(dateTime == null){
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +151,20 @@ class _EditTransactionView extends State<EditTransactionView> {
                                   return;
                                 }
                               }
+                              if(_type == 'Tiết kiệm'){
+                                final p = vm.getP(widget.transactionModel.savingID!);
+                                if (dateTime!.isBefore(p.ngayBD) || dateTime!.isAfter(p.ngayKT)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Thời gian hiện tại không thuộc gói tiết kiệm! HÃY CHỌN NGÀY HỢP LỆ! THUỘC GÓI TIẾT KIỆM'),
+                                        backgroundColor: Colors.redAccent,
+                                        duration: Duration(seconds: 3),
+                                      )
+                                  );
+                                  return;
+                                }
+                              }
+
                               TransactionModel t = TransactionModel(
                                   id: widget.transactionModel.id,
                                   type: _type!,
@@ -123,7 +172,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                                   category: context.read<CategoryVM>().categorySelect!.name,
                                   note: _note.text,
                                   dateTime: dateTime!,
-                                  savingID: widget.transactionModel.savingID
+                                  savingID: _type == 'Tiết kiệm' ? widget.transactionModel.savingID : -1
                               );
 
                               try {
@@ -136,7 +185,8 @@ class _EditTransactionView extends State<EditTransactionView> {
                                     backgroundColor: Colors.green,
                                   ),
                                 );
-                              } catch (e) {
+                              }
+                              catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text('Lỗi khi cập nhật dữ liệu: $e'),
@@ -144,7 +194,7 @@ class _EditTransactionView extends State<EditTransactionView> {
                                   ),
                                 );
                               }
-                            },
+                            } : null,
                             label: Text('Lưu'),
                             icon: Icon(Icons.update),
                           )

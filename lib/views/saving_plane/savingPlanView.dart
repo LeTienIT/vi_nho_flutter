@@ -19,6 +19,11 @@ class SavingPlanView extends StatefulWidget {
 
 class _SavingPlanView extends State<SavingPlanView> {
   String? _selectedPlan;
+
+  @override
+  void initState() {
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<PlanVM>();
@@ -217,7 +222,7 @@ class _SavingPlanView extends State<SavingPlanView> {
               color: _selectedPlan == planType ? Colors.blue : Colors.grey.shade300,
               width: 2,
             ),
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -237,9 +242,12 @@ class _SavingPlanView extends State<SavingPlanView> {
                     children: [
                       Text(title,
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color:  Theme.of(context).colorScheme.onSurface
+                          )),
                       const SizedBox(height: 8),
-                      Text(description, style: TextStyle(fontSize: 14)),
+                      Text(description, style: TextStyle(fontSize: 14,color:  Theme.of(context).colorScheme.onSurface)),
                     ],
                   ),
                 ),
@@ -328,8 +336,11 @@ class _SavingPlanView extends State<SavingPlanView> {
 
             InfoRow(label: 'Tổng: ', content: '${data['tongChuKy']} ${plan.chuKy}'),
             SizedBox(height: 8,),
+
             if(data['ngayNopTiepTheo']!=null)...[
               InfoRow(label: 'Ngày tiết kiệm tiếp theo: ', content: DateFormat('dd/MM/yyyy').format(data['ngayNopTiepTheo'])),
+              const SizedBox(height: 12),
+              InfoRow(label: 'Số tiết kiệm tiếp theo', content: NumberFormat.currency(locale: 'vi').format(data['soTienNopTiepTheo'])),
               const SizedBox(height: 12),
             ],
 

@@ -13,9 +13,7 @@ class PlanVM extends ChangeNotifier{
     final data = await _db.selectAllPlan();
     final transactionList = await _db.selectAllTransaction();
     final now = DateTime.now();
-
     final expiredPlans = data.where((plan) => plan.hoanThanh == 0 && plan.ngayKT.isBefore(DateTime(now.year, now.month, now.day)));
-
     for (var plan in expiredPlans) {
       plan.hoanThanh = 1;
       double tong = 0;
@@ -34,6 +32,7 @@ class PlanVM extends ChangeNotifier{
     isLoad = true;
     notifyListeners();
   }
+
 
   Future<int> insert(PlanModel p) async{
     int id = await _db.insertP(p);
@@ -54,6 +53,9 @@ class PlanVM extends ChangeNotifier{
     return _listPlan.where((p) => p.hoanThanh == 1).length;
   }
 
+  PlanModel getP(int id){
+    return _listPlan.firstWhere((p) => p.id == id);
+  }
   ///Trả ra kết quả {'rs': giá trị, 'id': giá trị}
   ///
   ///rs = -1 -> id = -1 => Lỗi, có nhiều hơn 1 gói đang mở

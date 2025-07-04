@@ -166,12 +166,14 @@ class TransactionVM extends ChangeNotifier{
     double tatolSaved = 0;
     for (var t in savedTransactions) {
       tatolSaved+=t.amount;
+      // print("saved: $tatolSaved - ${t.category} - ${t.amount} - ${t.type}");
     }
     List<DateTime> dates = Tool.getDaysInPeriodOfTime(plan.ngayBD, plan.ngayKT, plan.chuKy);
     DateTime now = DateTime.now();
     int tongChuKy = dates.length;
     double tongNo = 0;
     double tongDu = 0;
+    double soTienNopTiepTheo = plan.tienMoiKy;
     Map<DateTime,double> soNgayThieu = {};
     DateTime? ngayNopTiepTheo;
     String ten = 'Kế hoạch tiết kiệm tùy chọn';
@@ -219,9 +221,9 @@ class TransactionVM extends ChangeNotifier{
       }
       danhgia += '🔥 Hãy tiếp tục duy trì phong độ này và về đích thành công nhé!\n💪 CHÚC BẠN THÀNH CÔNG!';
       if(plan.ngayKT.year == now.year && plan.ngayKT.month==now.month&&plan.ngayKT.day==now.day){
-        danhgia = '🎉 TUYỆT VỜI. CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH KẾ HOẠCH TIẾT KIỆM LẦN NÀY\n. '
+        danhgia = '🎉 TUYỆT VỜI. CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH KẾ HOẠCH TIẾT KIỆM LẦN NÀY.\n. '
             '🌟 BẠN RẤT XUẤT SẮC, RẤT KIÊN TRÌ, HÃY TẬN HƯỞNG THÀNH QUẢ.\n '
-            '🔥 À ĐỪNG QUÊN QUAY LẠI VÀO NGÀY MAI KHI BẠN CÓ KẾ HOẠCH MỚI';
+            '🔥 À ĐỪNG QUÊN QUAY LẠI VÀO NGÀY MAI KHI BẠN CÓ KẾ HOẠCH MỚI.';
       }
     }
     else{
@@ -245,14 +247,21 @@ class TransactionVM extends ChangeNotifier{
         soNgayThieu.remove(key);
       }
       if(plan.ngayKT.year == now.year && plan.ngayKT.month==now.month&&plan.ngayKT.day==now.day){
-        danhgia = '⚠️ HEY! HÔM NAY LÀ NGÀY CUỐI CÙNG CỦA KẾ HOẠCH TIẾT KIỆM NÀY RÙI\n. '
-            '⏳ BẠN NÊN HOÀN THÀNH NÓ THÔI. HIỆN TẠI NÓ VẪN CHƯA ĐƯỢC HOÀN THÀNH.\n '
+        danhgia = '⚠️ HEY! HÔM NAY LÀ NGÀY CUỐI CÙNG CỦA KẾ HOẠCH TIẾT KIỆM NÀY RÙI.\n'
+            '⏳ BẠN NÊN HOÀN THÀNH NÓ THÔI. HIỆN TẠI NÓ VẪN CHƯA ĐƯỢC HOÀN THÀNH.\n'
             '🔥 HÃY KẾT THÚC QUÁ TRÌNH NÀY VÀ TẬN HƯỞNG THÀNH QUẢ THÔI.\n'
-            '🎯 À ĐỪNG QUÊN QUAY LẠI VÀO NGÀY MAI KHI BẠN CÓ KẾ HOẠCH MỚI';;
+            '🎯 À ĐỪNG QUÊN QUAY LẠI VÀO NGÀY MAI KHI BẠN CÓ KẾ HOẠCH MỚI.';
       }
     }
     if(plan.tenKeHoach == 'fixedUntilLunarNewYear'){
       ten = 'Kế hoạch tiết kiệm TẾT: ${DateTime.now().year+1}';
+      ngayNopTiepTheo ??= dates.last;
+      int tuan = Tool.getWeekOfYear(ngayNopTiepTheo);
+      soTienNopTiepTheo = 10000.0 * tuan;
+    }
+    if(ngayNopTiepTheo==null){
+      ngayNopTiepTheo = dates.last;
+      soTienNopTiepTheo = plan.tienMoiKy;
     }
 
     return {
@@ -265,6 +274,7 @@ class TransactionVM extends ChangeNotifier{
       'tongDu': tongDu,
       'tongNo': tongNo,
       'ngayNopTiepTheo': ngayNopTiepTheo,
+      'soTienNopTiepTheo': soTienNopTiepTheo,
       'danhGia': danhgia
     };
   }

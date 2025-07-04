@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 class TypeSelector extends StatelessWidget {
   final String? selected;
   final ValueChanged<String?> onChanged;
-  int planID;
-  TypeSelector({super.key, required this.selected, required this.onChanged, this.planID=-1});
+  int planID; bool enable;
+  TypeSelector({super.key, required this.selected, required this.onChanged, this.planID=-1, this.enable = true});
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +19,19 @@ class TypeSelector extends StatelessWidget {
               value: 'Thu',
               title: Text('Tiền vào'),
               groupValue: selected,
-              onChanged: onChanged
+              onChanged: enable ? onChanged : null
           ),
           RadioListTile(
               value: 'Chi',
               title: Text('Tiền ra'),
               groupValue: selected,
-              onChanged: onChanged
+              onChanged: enable ? onChanged : null
           ),
           RadioListTile(
             value: 'Tiết kiệm',
             title: Text('Tiết kiệm'),
             groupValue: selected,
-            onChanged: onChanged,
+            onChanged: planID!= -1 ? onChanged : null,
           ),
         ],
       ),

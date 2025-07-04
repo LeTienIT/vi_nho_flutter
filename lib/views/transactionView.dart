@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/models/transactionModel.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
+import 'package:vi_nho/viewmodels/planVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/filter_transaction/filterSection.dart';
 import 'package:vi_nho/widgets/transaction/transactionItem.dart';
@@ -24,8 +26,9 @@ class _TransactionListView extends State<TransactionListView>{
     final transactionVM = context.watch<TransactionVM>();
     final filterVM = context.watch<FilterVM>();
     final categoryVM = context.watch<CategoryVM>();
+    final planVM = context.watch<PlanVM>();
 
-    if(!transactionVM.isLoad || !categoryVM.isLoad){
+    if(!transactionVM.isLoad || !categoryVM.isLoad || !planVM.isLoad){
       return CircularProgressIndicator();
     }
     return Scaffold(
@@ -79,7 +82,7 @@ class _TransactionListView extends State<TransactionListView>{
                   }
                   return Dismissible(
                     key: Key(transactionVM.transactionList[index].id!.toString()),
-                    direction: DismissDirection.endToStart,
+                    direction: checkDismissDirection(item, planVM),
                     background: Container(
                       color: Colors.red,
                       alignment: Alignment.centerRight,
@@ -87,6 +90,7 @@ class _TransactionListView extends State<TransactionListView>{
                       child: Icon(Icons.delete),
                     ),
                     onDismissed: (direction){
+
                       transactionVM.deleteTransaction(transactionVM.transactionList[index].id!);
                       ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Đã xóa'),duration: Duration(seconds: 1),)
@@ -127,4 +131,14 @@ class _TransactionListView extends State<TransactionListView>{
     );
   }
 
+  DismissDirection checkDismissDirection(TransactionModel t, PlanVM vm){
+    if(t.type == 'Tiết kiệm'){
+      final p = vm.getP(t.savingID!);
+      final now = DateTime.now();
+      if(p.ngayKT.isBefore(DateTime(now.year,now.month,now.day))){
+        return DismissDirection.none;
+      }
+    }
+    return DismissDirection.endToStart;
+  }
 }

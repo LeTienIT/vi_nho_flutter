@@ -73,10 +73,10 @@ class DatabaseService{
       )
     ''');
 
-    //   await db.execute('''
-    //   ALTER TABLE ${DBConstants.tableTransaction}
-    //   ADD COLUMN ${DBConstants.columnSavingId} INTEGER DEFAULT -1
-    // ''');
+      await db.execute('''
+      ALTER TABLE ${DBConstants.tableTransaction}
+      ADD COLUMN ${DBConstants.columnSavingId} INTEGER DEFAULT -1
+    ''');
 
       await db.execute('''
       ALTER TABLE ${DBConstants.tableSaving}

@@ -39,7 +39,7 @@ class TransactionItem extends StatelessWidget {
               : null,
           boxShadow: [
             BoxShadow(
-              color: inSaving ? Colors.orange.withOpacity(0.4) : Colors.black12,
+              color: inSaving ? Colors.orange.withValues(alpha: 0.4) : Colors.black12,
               spreadRadius: 1,
               blurRadius: 6,
               offset: const Offset(0, 3),
@@ -71,22 +71,23 @@ class TransactionItem extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  if (inSaving)
-                    const Icon(Icons.savings, color: Colors.orange, size: 20),
-                  Text(
-                        NumberFormat.currency(locale: 'vi')
-                            .format(transactionModel.amount)
-                            .toString(),
-                    style: TextStyle(
-                      color: inSaving ? Colors.orange : (inCome ? Colors.green : Colors.red),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+              if (!isActive)
+                Row(
+                  children: [
+                    if (inSaving)
+                      const Icon(Icons.savings, color: Colors.orange, size: 20),
+                    Text(
+                      (inCome ? '+' : '-') + NumberFormat.currency(locale: 'vi', symbol: '')
+                              .format(transactionModel.amount)
+                              .toString(),
+                      style: TextStyle(
+                        color: inSaving ? Colors.orange : (inCome ? Colors.green : Colors.red),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               if (isActive)
                 IconButton(
                   icon: const Icon(Icons.edit, color: Colors.blue, size: 21),

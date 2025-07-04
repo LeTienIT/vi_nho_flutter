@@ -4,8 +4,8 @@ import 'package:vi_nho/models/categoryModel.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
 
 class CategoryPicker extends StatelessWidget{
-  const CategoryPicker({super.key});
-
+  CategoryPicker({super.key, this.enable = true});
+  bool enable;
   @override
   Widget build(BuildContext context) {
     final categoryVM = context.watch<CategoryVM>();
@@ -24,11 +24,11 @@ class CategoryPicker extends StatelessWidget{
                 child: Text(c.name)
             );
           }).toList(),
-          onChanged: (value){
+          onChanged: enable ? (value){
             if(value != null) {
               categoryVM.setSelect(value);
             }
-          },
+          } : null,
           validator: (value) {
             if (value == null) {
               return 'Vui lòng chọn danh mục';

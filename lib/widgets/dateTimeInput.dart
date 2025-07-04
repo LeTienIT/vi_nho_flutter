@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 class DateTimeInput extends StatelessWidget {
   final DateTime? dateTime;
   final ValueChanged<DateTime> onPressed;
-
-  const DateTimeInput({super.key, required this.dateTime, required this.onPressed});
+  bool enable;
+  DateTimeInput({super.key, required this.dateTime, required this.onPressed, this.enable = true});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class DateTimeInput extends StatelessWidget {
           ElevatedButton.icon(
             icon: Icon(Icons.calendar_today),
             label: Text('Chọn ngày'),
-            onPressed: () async {
+            onPressed: enable ? () async {
               final pickedDate = await showDatePicker(
                 context: context,
                 firstDate: DateTime(1990),
@@ -33,8 +33,8 @@ class DateTimeInput extends StatelessWidget {
               if (pickedDate != null) {
                 onPressed(pickedDate);
               }
-            }
-          ),
+            }: null
+          ) ,
         ],
       ),
     );

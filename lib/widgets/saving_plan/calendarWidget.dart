@@ -14,7 +14,10 @@ class CalendarWidget extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
-    final normalizedNow = DateTime(now.year, now.month, now.day);
+    var normalizedNow = DateTime(now.year, now.month, now.day);
+    if(normalizedNow.isBefore(dates.first) || normalizedNow.isAfter(dates.last)){
+      normalizedNow = dates.first;
+    }
     
     return Column(
       children: [

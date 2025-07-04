@@ -91,7 +91,6 @@ class _AddTransactionView extends State<AddTransactionView>{
                     Expanded(
                         child: ElevatedButton.icon(
                           onPressed: () async{
-                            // print("Dữ liệu mới: ${context.read<CategoryVM>().categorySelect!.name}");
                             if(_formKey.currentState!.validate()){
                               if(dateTime == null){
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -104,13 +103,26 @@ class _AddTransactionView extends State<AddTransactionView>{
                                 return;
                               }
                             }
+                            if(_type == 'Tiết kiệm'){
+                              final p = vm.getP(planID);
+                              if (dateTime!.isBefore(p.ngayBD) || dateTime!.isAfter(p.ngayKT)) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Thời gian hiện tại không thuộc gói tiết kiệm! HÃY CHỌN NGÀY HỢP LỆ! THUỘC GÓI TIẾT KIỆM'),
+                                      backgroundColor: Colors.redAccent,
+                                      duration: Duration(seconds: 3),
+                                    )
+                                );
+                                return;
+                              }
+                            }
                             TransactionModel t = TransactionModel(
                                 type: _type!,
                                 amount: double.parse(_amount.text),
                                 category: context.read<CategoryVM>().categorySelect!.name,
                                 note: _note.text,
                                 dateTime: dateTime!,
-                                savingID: planID
+                                savingID: _type == 'Tiết kiệm' ? planID : -1
                             );
 
                             try {
