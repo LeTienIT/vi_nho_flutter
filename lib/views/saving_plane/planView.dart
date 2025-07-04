@@ -63,8 +63,11 @@ class PlanView extends StatelessWidget{
                         return await showDialog<bool>(
                           context: context,
                           builder: (ctx) => AlertDialog(
-                            title: const Text('Xác nhận'),
-                            content: const Text('Bạn có chắc chắn muốn xóa kế hoạch này không?'),
+                            title: const Text('CẢNH BÁO'),
+                            content: const Text(
+                                'Bạn có chắc chắn muốn xóa kế hoạch này không?\n\n'
+                                    'Việc xóa KẾ HOẠCH này sẽ đồng nghĩa XÓA CÁC GIAO DỊCH thuộc KẾ HOẠCH này!'
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.of(ctx).pop(false),
