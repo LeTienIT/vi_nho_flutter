@@ -51,7 +51,7 @@ class SummaryItem extends StatelessWidget{
               child: Text(
                 _buildPercentText(percent!),
                 style: TextStyle(
-                  color: percent! >= 0 ? Colors.red : Colors.green,
+                  color: title=='Tổng thu' ? percent! >= 0 ? Colors.green : Colors.red : percent! >= 0 ? Colors.red : Colors.green,
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                 ),
