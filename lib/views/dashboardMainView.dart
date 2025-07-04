@@ -9,10 +9,25 @@ import 'package:vi_nho/widgets/dashboard/pieChart.dart';
 import 'package:vi_nho/widgets/dashboard/summaryCard.dart';
 import 'package:vi_nho/widgets/dashboard/topCategory.dart';
 import '../viewmodels/categoryVM.dart';
+import '../widgets/welcomePopup.dart';
 
-
-class DashboardMainView extends StatelessWidget {
+class DashboardMainView extends StatefulWidget{
   const DashboardMainView({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _DashboardMainView();
+  }
+
+}
+class _DashboardMainView extends State<DashboardMainView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WelcomePopup.showIfFirstTime(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

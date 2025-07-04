@@ -11,6 +11,7 @@ import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/planVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
+import 'package:vi_nho/views/aboutView.dart';
 import 'package:vi_nho/views/category/addCategoryView.dart';
 import 'package:vi_nho/views/category/editCategoryView.dart';
 import 'package:vi_nho/views/categoryView.dart';
@@ -129,6 +130,10 @@ class MyApp extends StatelessWidget {
           case '/plan-list':
             return MaterialPageRoute(
               builder: (_) => PlanView(),
+            );
+          case '/about':
+            return MaterialPageRoute(
+              builder: (_) => AboutView(),
             );
         }
         return null;
