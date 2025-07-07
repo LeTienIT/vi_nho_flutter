@@ -11,8 +11,8 @@ class DatabaseService{
 
   DatabaseService._internal();
 
-  // Cái này dùng để khởi tạo khi sử dụng, sau khi khởi tạo thì mới truy cập biến GET DB ở dưới được
-  // Nếu không khởi tạo thì không thể truy cập GET DB do hàm tạo là private rùi => KHÔNG THỂ KHỞI TẠO CLASS Ở BÊN NGOÀI
+  /// Cái này dùng để khởi tạo khi sử dụng, sau khi khởi tạo thì mới truy cập biến GET DB ở dưới được
+  /// Nếu không khởi tạo thì không thể truy cập GET DB do hàm tạo là private rùi => KHÔNG THỂ KHỞI TẠO CLASS Ở BÊN NGOÀI
   factory DatabaseService() => _instance;
 
   Future<Database> get db async => _db ??= await _initDatabase();
@@ -51,16 +51,7 @@ class DatabaseService{
       )
     ''');
 
-    // Thêm dữ liệu mẫu
-    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Ăn uống'});
-    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Giải trí'});
-    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Lương'});
-    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Hóa đơn'});
-  }
-
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
-    if(oldVersion < newVersion){
-      await db.execute('''
+    await db.execute('''
       CREATE TABLE IF NOT EXISTS ${DBConstants.tableSaving} (
         ${DBConstants.columnId} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${DBConstants.columnNamePlan} TEXT,
@@ -73,15 +64,26 @@ class DatabaseService{
       )
     ''');
 
-      await db.execute('''
+    await db.execute('''
       ALTER TABLE ${DBConstants.tableTransaction}
       ADD COLUMN ${DBConstants.columnSavingId} INTEGER DEFAULT -1
     ''');
 
-      await db.execute('''
+    await db.execute('''
       ALTER TABLE ${DBConstants.tableSaving}
       ADD COLUMN ${DBConstants.columnThanhCong} INTEGER DEFAULT -1
     ''');
+
+    // Thêm dữ liệu mẫu
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Ăn uống'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Giải trí'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Lương'});
+    await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Hóa đơn'});
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
+    if(oldVersion < newVersion){
+
     }
   }
 
