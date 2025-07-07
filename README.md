@@ -1,7 +1,5 @@
 # Vi Nhớ - Ứng dụng ghi chú thông minh
 
-![Banner](https://example.com/path/to/banner_image.png) 
-
 Ứng dụng ghi chú đơn giản nhưng mạnh mẽ, giúp bạn lưu trữ và quản lý các ghi chú cá nhân một cách hiệu quả.
 
 ## Giới thiệu
@@ -33,20 +31,20 @@ Vi Nhớ là ứng dụng ghi chú được phát triển bằng Flutter với c
 
 ## Hình ảnh ứng dụng
 
-![1 số ảnh ứng dụng](assets/1.png)
+![1 số ảnh ứng dụng](assets/1.jpg)
 
-![1 số ảnh ứng dụng](assets/2.png)
+![1 số ảnh ứng dụng](assets/2.jpg)
 
-![1 số ảnh ứng dụng](assets/3.png)
+![1 số ảnh ứng dụng](assets/3.jpg)
 
-![1 số ảnh ứng dụng](assets/4.png)
+![1 số ảnh ứng dụng](assets/4.jpg)
 
 ## Công nghệ sử dụng
 - Flutter framework
 - Dart programming language
 
 ## Liên hệ
-Thông tin: ![CV](https://letienit.github.io/cv_me/)
+Thông tin: [xem cv](https://letienit.github.io/cv_me/)
 
 ---
 *Vi Nhớ - Lưu giữ những điều quan trọng*
