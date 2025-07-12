@@ -46,7 +46,7 @@ class DashboardMonthVM extends ChangeNotifier{
         dailyMap[day] = (dailyMap[day] ?? 0) + tx.amount;
       }
     }
-    averageIn = totalIncome / dailyMap.length;
+    averageIn = totalIncome / DateTime(year,monthNumber+1,0).day;
     averageEx = totalExpense / dailyMap.length;
 
     final sortedDays = dailyMap.keys.toList()..sort();

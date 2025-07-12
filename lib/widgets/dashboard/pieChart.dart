@@ -30,31 +30,24 @@ class PieChartWidget extends StatelessWidget{
               ),
             ),
             if(data.isNotEmpty)...[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Wrap(
                 children: [
-                  Expanded(
-                      flex: 2,
-                      child: AspectRatio(
-                        aspectRatio: 1.1,
-                        child: Container(
-                          padding: EdgeInsets.all(5),
-                          margin: EdgeInsets.only(bottom: 15),
-                          child: PieChart(
-                            PieChartData(
-                              sections: sections,
-                              centerSpaceRadius: 40,
-                              sectionsSpace: 2,
-                              borderData: FlBorderData(show: false),
-                            ),
-                          ),
+                  AspectRatio(
+                    aspectRatio: 1.1,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.only(bottom: 15),
+                      child: PieChart(
+                        PieChartData(
+                          sections: sections,
+                          centerSpaceRadius: 40,
+                          sectionsSpace: 2,
+                          borderData: FlBorderData(show: false),
                         ),
-                      )
+                      ),
+                    ),
                   ),
-                  Expanded(
-                    flex: 1,
-                    child:  _buildLegend(data, _defaultColors()),
-                  ),
+                  _buildLegend(data, _defaultColors()),
                 ],
               ),
             ]
@@ -114,16 +107,19 @@ class PieChartWidget extends StatelessWidget{
     Colors.teal,
     Colors.brown,
     Colors.indigo,
-    Colors.pink
+    Colors.pink,
+    Colors.greenAccent,
+    Colors.amber,
+    Colors.deepOrange,
+    Colors.yellowAccent
   ];
 
   Widget _buildLegend(Map<String, double> data, List<Color> colors) {
     final entries = data.entries.toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Wrap(
       children: List.generate(entries.length, (index) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.only(left: 6, right: 3, top: 3),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

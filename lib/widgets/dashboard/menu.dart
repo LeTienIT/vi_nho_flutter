@@ -116,11 +116,11 @@ class Menu extends StatelessWidget{
                   ),
                 ],
               ),
-              ListTile(
-                leading: const Icon(Icons.settings),
-                title: const Text('Cài đặt giao diện'),
-                onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
-              ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Cài đặt giao diện'),
+                  onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
+                ),
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text('Hướng dẫn'),
