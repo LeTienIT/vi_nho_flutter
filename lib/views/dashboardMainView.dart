@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/core/tool.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/widgets/dashboard/lineChart.dart';
@@ -44,7 +45,7 @@ class _DashboardMainView extends State<DashboardMainView> {
       return Center(child: CircularProgressIndicator());
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Tổng quát chi tiêu tháng ${DateTime.now().month}')),
+      appBar: AppBar(title: Text('Tổng quát chi tiêu tuần ${Tool.getWeekOfYear(DateTime.now())}')),
       body: Padding(
         padding: EdgeInsets.all(12),
         child: SingleChildScrollView(
@@ -54,16 +55,16 @@ class _DashboardMainView extends State<DashboardMainView> {
               SummaryCard(tongThu: vm.totalIncome,
                 tongChi: vm.totalExpense,
                 chechLech: vm.balance,
-                tieuDe: 'Tổng quát tháng ${DateTime.now().month}',
+                tieuDe: 'Tổng quát chi tiêu',
                 percentIn: vm.percentIn,
                 percentEx: vm.percentEx,
               ),
               SizedBox(height: 10),
-              PieChartWidget(vm.categoryExpenseMap,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: false,),
+              PieChartWidget(vm.categoryChart,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: false,),
               SizedBox(height: 10),
-              LineChartWidget(vm.dailyExpenseSpots, tieuDe: 'Biểu đồ chi tiêu theo ngày',),
+              LineChartWidget(vm.dailyChart, tieuDe: 'Biểu đồ chi tiêu theo ngày',),
               SizedBox(height: 10,),
-              TopCategory(vm.topCategories),
+              TopCategory(vm.topCategory),
             ],
           ),
         ),

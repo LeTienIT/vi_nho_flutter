@@ -1,18 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vi_nho/core/tool.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../models/transactionModel.dart';
 
 class DashboardMainViewModel extends ChangeNotifier{
   TransactionVM? _transactionVM;
-  List<TransactionModel>? transactionList;
+  List<TransactionModel>? listTransaction;
   bool isLoading = false;
+  int year = DateTime.now().year;
+  int weekNumber = Tool.getWeekOfYear(DateTime.now());
 
   DashboardMainViewModel(this._transactionVM) {
     if (_transactionVM != null) {
       if(_transactionVM!.isLoad){
-        transactionList =_transactionVM!.transactionList;
+        listTransaction =_transactionVM!.transactionList;
         _generateDashboardData();
         isLoading = true;
         notifyListeners();
@@ -23,7 +26,7 @@ class DashboardMainViewModel extends ChangeNotifier{
   void updateData(TransactionVM vm) {
     _transactionVM = vm;
     if(_transactionVM!.isLoad){
-      transactionList =_transactionVM!.listCore;
+      listTransaction =_transactionVM!.listCore;
       _generateDashboardData();
       isLoading = true;
       notifyListeners();
@@ -46,66 +49,60 @@ class DashboardMainViewModel extends ChangeNotifier{
   double totalIncome = 0;
   double totalExpense = 0;
   double get balance => totalIncome - totalExpense;
-
   late double percentIn, percentEx;
-
-  Map<String, double> categoryExpenseMap = {}; // PieChart
-  List<FlSpot> dailyExpenseSpots = []; // LineChart
-  List<MapEntry<String, double>> topCategories = [];
-
+  Map<String, double> categoryChart = {}; // PieChart
+  List<FlSpot> dailyChart = []; // LineChart
+  List<MapEntry<String, double>> topCategory = [];
+  late List<TransactionModel> listTransactionSort;
   // ------------ Hàm xử lý chính -----------------------------
 
   void _generateDashboardData() {
-    if (transactionList == null) return;
+    if (listTransaction == null) return;
 
-    final now = DateTime.now();
-    final currentMonthList = transactionList!.where((tx) =>
-    tx.dateTime.month == now.month && tx.dateTime.year == now.year);
+    totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0;
+    topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
 
-    totalIncome = 0;
-    totalExpense = 0;
-    percentEx = 0.0; percentIn = 0.0;
-    categoryExpenseMap.clear();
-
-    final dailyMap = <int, double>{}; // day -> amount
-    for (var tx in currentMonthList) {
-      if (tx.type == 'Thu') {
-        totalIncome += tx.amount;
-      } else {
-        totalExpense += tx.amount;
-
-        // PieChart - category grouping
-        categoryExpenseMap[tx.category] =
-            (categoryExpenseMap[tx.category] ?? 0) + tx.amount;
-
-        // LineChart - daily expense
-        int day = tx.dateTime.day;
-        dailyMap[day] = (dailyMap[day] ?? 0) + tx.amount;
+    final dailyMap = <int, double>{};
+    final condition = Tool.getWeekRange(year, weekNumber);
+    var listTransactionWeek = filterTransactionsByWeek(listTransaction!, condition[0], condition[1]);
+    for(var t in listTransactionWeek){
+      if(t.type == 'Thu'){
+        totalIncome+=t.amount;
+      }else{
+        totalExpense+=t.amount;
+        categoryChart[t.category] = (categoryChart[t.category] ?? 0 ) + t.amount;
+        dailyMap[t.dateTime.day] = (dailyMap[t.dateTime.day] ?? 0 ) + t.amount;
       }
     }
+    topCategory = categoryChart.entries.toList()..sort((a,b) => b.value.compareTo(a.value));
+    topCategory = topCategory.take(5).toList();
 
-    // LineChart: chuyển dailyMap => FlSpot
-    final sortedDays = dailyMap.keys.toList()..sort();
-    dailyExpenseSpots = sortedDays
-        .map((day) => FlSpot(day.toDouble(), dailyMap[day]!))
-        .toList();
+    final dailySort = dailyMap.keys.toList()..sort();
+    dailyChart = dailySort.map((d) => FlSpot(d.toDouble(), dailyMap[d]!)).toList();
 
-    // Top category
-    topCategories = categoryExpenseMap.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    listTransactionSort = listTransactionWeek..sort((a,b) => b.amount.compareTo(a.amount));
+    listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
+    listTransactionSort = listTransactionSort.take(5).toList();
 
-    if(now.month > 1){
+    if(weekNumber > 1){
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;
-      final lastList = transactionList!.where((t) => t.dateTime.month == now.month-1 && t.dateTime.year == now.year);
-      for(var t in lastList){
+      final conditionLast = Tool.getWeekRange(year, weekNumber-1);
+      var listTransactionLastWeek = filterTransactionsByWeek(listTransaction!, conditionLast[0], conditionLast[1]);
+      for(var t in listTransactionLastWeek){
         if(t.type == 'Thu'){
           totalIncomeLast+=t.amount;
         }else{
           totalExpenseLast+=t.amount;
         }
+        percentIn = ((totalIncome - totalIncomeLast) / totalIncomeLast ) * 100;
+        percentEx = ((totalExpense - totalExpenseLast) / totalExpenseLast ) * 100;
       }
-      percentIn = ((totalIncome - totalIncomeLast) / totalIncomeLast ) * 100;
-      percentEx = ((totalExpense - totalExpenseLast) / totalExpenseLast ) * 100;
     }
+  }
+
+  List<TransactionModel> filterTransactionsByWeek(List<TransactionModel> all, DateTime from, DateTime to) {
+    return all.where((tx) =>
+    tx.dateTime.isAfter(from.subtract(Duration(seconds: 1))) && tx.dateTime.isBefore(to.add(Duration(days: 1)))
+    ).toList();
   }
 }
