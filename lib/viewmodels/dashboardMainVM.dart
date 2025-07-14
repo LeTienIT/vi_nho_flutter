@@ -64,6 +64,7 @@ class DashboardMainViewModel extends ChangeNotifier{
 
     final dailyMap = <int, double>{};
     final condition = Tool.getWeekRange(year, weekNumber);
+    // print(condition);
     var listTransactionWeek = filterTransactionsByWeek(listTransaction!, condition[0], condition[1]);
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
@@ -100,9 +101,19 @@ class DashboardMainViewModel extends ChangeNotifier{
     }
   }
 
-  List<TransactionModel> filterTransactionsByWeek(List<TransactionModel> all, DateTime from, DateTime to) {
-    return all.where((tx) =>
-    tx.dateTime.isAfter(from.subtract(Duration(seconds: 1))) && tx.dateTime.isBefore(to.add(Duration(days: 1)))
-    ).toList();
+  List<TransactionModel> filterTransactionsByWeek(
+      List<TransactionModel> transactions,
+      DateTime startDate,
+      DateTime endDate,
+      ) {
+    final start = DateTime(startDate.year, startDate.month, startDate.day);
+    final end = DateTime(endDate.year, endDate.month, endDate.day);
+
+    return transactions.where((tx) {
+      final txDate = DateTime(tx.dateTime.year, tx.dateTime.month, tx.dateTime.day);
+      return txDate.isAtSameMomentAs(start) ||
+          txDate.isAtSameMomentAs(end) ||
+          (txDate.isAfter(start) && txDate.isBefore(end));
+    }).toList();
   }
 }

@@ -1,16 +1,29 @@
 class Tool{
   /// Lấy ngày bắt đầu và kết thúc của 1 tuần
   static List<DateTime> getWeekRange(int year, int week) {
+    // Lấy ngày đầu tiên của năm
     final janFirst = DateTime(year, 1, 1);
-    final daysToAdd = (week - 1) * 7;
-    final approx = janFirst.add(Duration(days: daysToAdd));
 
-    final weekday = approx.weekday;
-    final monday = approx.subtract(Duration(days: weekday - 1));
+    // Tính ngày ~ đầu tuần (Thứ 2)
+    final daysToFirstMonday = (8 - janFirst.weekday) % 7;
+    final firstMonday = janFirst.add(Duration(days: daysToFirstMonday));
 
+    // Nếu tuần yêu cầu là tuần 1 nhưng 1/1 chưa đến Thứ 2
+    if (week == 1 && daysToFirstMonday >= 7) {
+      return [
+        DateTime(year, 1, 1),
+        firstMonday.subtract(Duration(days: 1))
+      ];
+    }
+
+    // Tính ngày Thứ 2 của tuần cần lấy
+    final monday = firstMonday.add(Duration(days: (week - 1) * 7));
     final sunday = monday.add(Duration(days: 6));
 
-    return [monday, sunday];
+    return [
+      DateTime(monday.year, monday.month, monday.day), // 00:00:00 Thứ 2
+      DateTime(sunday.year, sunday.month, sunday.day, 23, 59, 59, 999) // 23:59:59.999 Chủ Nhật
+    ];
   }
 
   /// Ngày hiện tại thuộc tuần nào trong năm
