@@ -7,8 +7,9 @@ class SummaryCard extends StatelessWidget {
   final String tieuDe;
   final double tongThu, tongChi;
   final double? chechLech, percentIn, percentEx, balancePercent;
+  bool? noZero;
 
-  const SummaryCard({
+  SummaryCard({
     super.key,
     this.tieuDe1 = 'Tổng thu',
     this.tieuDe2 = 'Tổng chi',
@@ -20,6 +21,7 @@ class SummaryCard extends StatelessWidget {
     this.percentEx,
     this.balancePercent,
     this.tieuDe = "Dashboard",
+    this.noZero = false
   });
 
   @override
@@ -48,14 +50,14 @@ class SummaryCard extends StatelessWidget {
                 runSpacing: 16,
                 alignment: WrapAlignment.center,
                 children: [
-                  SummaryItem(tieuDe1, tongThu, Colors.green, percentIn),
-                  SummaryItem(tieuDe2, tongChi, Colors.red, percentEx),
+                  SummaryItem(tieuDe1, tongThu, Colors.green, percentIn, noZero),
+                  SummaryItem(tieuDe2, tongChi, Colors.red, percentEx, noZero),
                   if (chechLech != null)
                     SummaryItem(
                       tieuDe3,
                       chechLech!,
                       chechLech! > 0 ? Colors.green : Colors.redAccent,
-                      balancePercent,
+                      balancePercent, noZero
                     ),
                 ],
               ),

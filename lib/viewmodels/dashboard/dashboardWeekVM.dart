@@ -15,6 +15,8 @@ class DashboardWeekVM extends ChangeNotifier{
   late List<FlSpot> dailyChart;
   late Map<String, double> categoryChart;
   late List<TransactionModel> listTransactionSort;
+  double averageIn = 0;
+  double averageEx  = 0;
   DashboardWeekVM({required this.listTransaction, required this.weekNumber, required this.year}){
     _initData();
     notifyListeners();
@@ -28,7 +30,7 @@ class DashboardWeekVM extends ChangeNotifier{
   }
 
   void _initData(){
-    totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0;
+    totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0;averageIn = 0; averageEx = 0;
     topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
 
     final dailyMap = <int, double>{};
@@ -54,6 +56,10 @@ class DashboardWeekVM extends ChangeNotifier{
     listTransactionSort = listTransactionSort.take(5).toList();
 
     if(weekNumber > 1){
+      averageIn = totalIncome / 7;
+      if(dailyMap.isNotEmpty) {
+        averageEx = totalExpense / dailyMap.length;
+      }
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;
       final conditionLast = Tool.getWeekRange(year, weekNumber-1);
       var listTransactionLastWeek = filterTransactionsByWeek(listTransaction, conditionLast[0], conditionLast[1]);

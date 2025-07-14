@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 
 class SummaryItem extends StatelessWidget{
 
-  String title; double amount; Color color; double? percent;
+  String title; double amount; Color color; double? percent; bool? noZoro;
 
-  SummaryItem(this.title, this.amount, this.color, [this.percent]);
+  SummaryItem(this.title, this.amount, this.color, [this.percent, this.noZoro = false]);
 
   @override
   Widget build(BuildContext context){
@@ -27,7 +27,7 @@ class SummaryItem extends StatelessWidget{
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _formatAmountOnly(amount),
+                  _formatAmountOnly(amount,noZero: noZoro!),
                   style: TextStyle(
                     color: color,
                     fontSize: 16,
@@ -68,7 +68,12 @@ class SummaryItem extends StatelessWidget{
     return percent >= 0 ? '↑ $formatted%' : '↓ $formatted%';
   }
 
-  String _formatAmountOnly(double amount) {
+  String _formatAmountOnly(double amount, {bool noZero = false}) {
+    if(noZero){
+      if(amount <= 0){
+        return '^_^';
+      }
+    }
     final format = NumberFormat.currency(locale: 'vi', symbol: '');
     return format.format(amount).trim();
   }

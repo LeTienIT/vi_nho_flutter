@@ -37,7 +37,18 @@ class DashboardWeekView extends StatelessWidget{
               tieuDe: 'Tổng quát chi tiêu',
               percentIn: dashboardWeekVM.percentIn,
               percentEx: dashboardWeekVM.percentEx,
+              noZero: true,
             ),
+            SizedBox(height: 10),
+            SummaryCard(
+              tieuDe1: 'TB mỗi ngày thu',
+              tieuDe2: 'TB mỗi lần tiêu',
+              tongThu: dashboardWeekVM.averageIn,
+              tongChi: dashboardWeekVM.averageEx,
+              tieuDe: 'Trung bình mỗi ngày',
+              noZero: true,
+            ),
+
             SizedBox(height: 10),
 
             PieChartWidget(dashboardWeekVM.categoryChart,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: false,),
