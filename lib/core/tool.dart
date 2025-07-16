@@ -1,30 +1,25 @@
+import 'package:intl/intl.dart';
+
 class Tool{
   /// Lấy ngày bắt đầu và kết thúc của 1 tuần
   static List<DateTime> getWeekRange(int year, int week) {
-    // Lấy ngày đầu tiên của năm
-    final janFirst = DateTime(year, 1, 1);
+    // Ngày 4 tháng 1 luôn thuộc tuần đầu tiên theo ISO 8601
+    final jan4 = DateTime(year, 1, 4);
 
-    // Tính ngày ~ đầu tuần (Thứ 2)
-    final daysToFirstMonday = (8 - janFirst.weekday) % 7;
-    final firstMonday = janFirst.add(Duration(days: daysToFirstMonday));
+    // Tìm Thứ Hai của tuần chứa 4/1
+    final int diffToMonday = jan4.weekday - DateTime.monday;
+    final firstMonday = jan4.subtract(Duration(days: diffToMonday));
 
-    // Nếu tuần yêu cầu là tuần 1 nhưng 1/1 chưa đến Thứ 2
-    if (week == 1 && daysToFirstMonday >= 7) {
-      return [
-        DateTime(year, 1, 1),
-        firstMonday.subtract(Duration(days: 1))
-      ];
-    }
-
-    // Tính ngày Thứ 2 của tuần cần lấy
+    // Tính Thứ Hai của tuần cần tìm
     final monday = firstMonday.add(Duration(days: (week - 1) * 7));
     final sunday = monday.add(Duration(days: 6));
 
     return [
-      DateTime(monday.year, monday.month, monday.day), // 00:00:00 Thứ 2
-      DateTime(sunday.year, sunday.month, sunday.day, 23, 59, 59, 999) // 23:59:59.999 Chủ Nhật
+      DateTime(monday.year, monday.month, monday.day),
+      DateTime(sunday.year, sunday.month, sunday.day, 23, 59, 59, 999),
     ];
   }
+
 
   /// Ngày hiện tại thuộc tuần nào trong năm
   static int getWeekOfYear(DateTime date) {

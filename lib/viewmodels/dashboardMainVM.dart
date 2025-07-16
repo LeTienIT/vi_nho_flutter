@@ -68,8 +68,10 @@ class DashboardMainViewModel extends ChangeNotifier{
 
     final dailyMap = <int, double>{};
     final condition = Tool.getWeekRange(year, weekNumber);
-    // print(condition);
+    print(weekNumber);
+    print(condition);
     var listTransactionWeek = filterTransactionsByWeek(listTransaction!, condition[0], condition[1]);
+    print(listTransactionWeek);
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
         totalIncome+=t.amount;

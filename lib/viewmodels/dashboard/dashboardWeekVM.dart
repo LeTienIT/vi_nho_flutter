@@ -36,6 +36,7 @@ class DashboardWeekVM extends ChangeNotifier{
     final dailyMap = <int, double>{};
     final condition = Tool.getWeekRange(year, weekNumber);
     var listTransactionWeek = filterTransactionsByWeek(listTransaction, condition[0], condition[1]);
+    print(listTransactionWeek);
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
         totalIncome+=t.amount;
