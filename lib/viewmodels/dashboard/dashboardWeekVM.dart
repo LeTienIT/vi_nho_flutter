@@ -32,15 +32,16 @@ class DashboardWeekVM extends ChangeNotifier{
   void _initData(){
     totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0;averageIn = 0; averageEx = 0;
     topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
-
+    int tongGiaoDichChi = 0;
     final dailyMap = <int, double>{};
     final condition = Tool.getWeekRange(year, weekNumber);
     var listTransactionWeek = filterTransactionsByWeek(listTransaction, condition[0], condition[1]);
-    print(listTransactionWeek);
+    // print(listTransactionWeek);
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
         totalIncome+=t.amount;
       }else{
+        tongGiaoDichChi++;
         totalExpense+=t.amount;
         categoryChart[t.category] = (categoryChart[t.category] ?? 0 ) + t.amount;
         dailyMap[t.dateTime.day] = (dailyMap[t.dateTime.day] ?? 0 ) + t.amount;
@@ -58,8 +59,8 @@ class DashboardWeekVM extends ChangeNotifier{
 
     if(weekNumber > 1){
       averageIn = totalIncome / 7;
-      if(dailyMap.isNotEmpty) {
-        averageEx = totalExpense / dailyMap.length;
+      if(tongGiaoDichChi > 0) {
+        averageEx = totalExpense / tongGiaoDichChi;
       }
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;
       final conditionLast = Tool.getWeekRange(year, weekNumber-1);

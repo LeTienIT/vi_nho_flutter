@@ -1,4 +1,4 @@
-enum FilterField { amount, date, category, note }
+enum FilterField { month, amount, date, category, note }
 enum FilterOperator { greaterThan, lessThan, equal, contains }
 
 class FilterCondition{

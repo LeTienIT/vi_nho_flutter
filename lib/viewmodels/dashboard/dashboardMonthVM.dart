@@ -27,7 +27,7 @@ class DashboardMonthVM extends ChangeNotifier{
   void _initData(){
     totalIncome = 0;totalExpense = 0;percentEx = 0.0; percentIn = 0.0; averageIn = 0; averageEx = 0;
     categoryExpenseMap.clear();dailyExpenseSpots.clear();topCategories.clear();listTransactionSort.clear();
-
+    int tongGiaoDichChi = 0;
     final currentList = listTransaction.where((t) => t.dateTime.month == monthNumber && t.dateTime.year == year).toList();
     listTransactionSort = currentList..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
@@ -37,6 +37,7 @@ class DashboardMonthVM extends ChangeNotifier{
       if (tx.type == 'Thu') {
         totalIncome += tx.amount;
       } else {
+        tongGiaoDichChi++;
         totalExpense += tx.amount;
 
         categoryExpenseMap[tx.category] =
@@ -47,7 +48,9 @@ class DashboardMonthVM extends ChangeNotifier{
       }
     }
     averageIn = totalIncome / DateTime(year,monthNumber+1,0).day;
-    averageEx = totalExpense / dailyMap.length;
+    if(tongGiaoDichChi > 0) {
+      averageEx = totalExpense / tongGiaoDichChi;
+    }
 
     final sortedDays = dailyMap.keys.toList()..sort();
     dailyExpenseSpots = sortedDays

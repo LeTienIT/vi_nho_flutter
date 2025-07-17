@@ -84,6 +84,10 @@ class TransactionVM extends ChangeNotifier{
     final condition = _filterCondition!;
     _transactionFilter = _transactionList.where((e){
       switch(condition.field){
+        case FilterField.month:
+          final date = e.dateTime;
+          final filterValue = condition.value as int;
+          return date.month == filterValue && date.year == DateTime.now().year;
         case FilterField.amount:
           final amount = e.amount;
           final filterValue = condition.value as double;

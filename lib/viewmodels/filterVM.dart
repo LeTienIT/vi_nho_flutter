@@ -31,6 +31,7 @@ class FilterVM extends ChangeNotifier {
   }
 
   FilterCondition? buildCondition() {
+    if(selectedField == FilterField.month)selectedOperator=FilterOperator.equal;
     if (selectedField != null && selectedOperator != null && inputValue != null) {
       return FilterCondition(
         field: selectedField!,

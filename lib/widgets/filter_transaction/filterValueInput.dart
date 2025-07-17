@@ -18,6 +18,15 @@ class FilterValueInput extends StatelessWidget{
     if(field == null) return const Text('Chọn trường');
 
     switch(field!){
+      case FilterField.month:
+        return DropdownButtonFormField<int>(
+          value: DateTime.now().month,
+          hint: const Text('Chọn tháng'),
+          onChanged: (value) => filterVM.setInputValue(value),
+          items: [1,2,3,4,5,6,7,8,9,10,11,12].map((e){
+            return DropdownMenuItem(value: e,child: Text("Tháng $e"),);
+          }).toList(),
+        );
       case FilterField.amount:
         return TextField(
           keyboardType: TextInputType.number,
