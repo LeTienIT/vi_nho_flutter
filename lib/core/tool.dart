@@ -21,19 +21,24 @@ class Tool{
   }
 
 
-  /// Ngày hiện tại thuộc tuần nào trong năm
+  /// Trả về số tuần trong năm theo chuẩn ISO 8601.
+  /// Tuần 1 là tuần có ít nhất 4 ngày thuộc năm đó (tuần chứa ngày 4/1).
   static int getWeekOfYear(DateTime date) {
-    final firstDayOfYear = DateTime(date.year, 1, 1);
-    final daysOffset = firstDayOfYear.weekday - 1;
+    // Thứ Năm trong cùng tuần với ngày cần tính
+    final thursday = _getThursdayOfWeek(date);
 
-    final firstMonday = firstDayOfYear.subtract(Duration(days: daysOffset));
+    // Thứ Năm đầu tiên của năm (tuần 1)
+    final firstThursday = _getThursdayOfWeek(DateTime(date.year, 1, 4));
 
-    final diff = date.difference(firstMonday).inDays;
-    final weekNumber = (diff / 7).ceil();
+    final diff = thursday.difference(firstThursday).inDays;
 
-    return weekNumber;
+    return (diff / 7).floor() + 1;
   }
 
+  /// Lấy ngày thứ Năm của tuần có chứa ngày [date]
+  static DateTime _getThursdayOfWeek(DateTime date) {
+    return date.subtract(Duration(days: date.weekday - 4));
+  }
   /// Lấy tổng số tuần trong năm
   static int getTotalWeeksInYear(int year) {
     final lastDay = DateTime(year, 12, 31);
