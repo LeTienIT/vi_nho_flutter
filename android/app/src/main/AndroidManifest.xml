@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <application
-        android:label="ChiNote"
+        android:label="Quản lý chi tiêu"
         android:name="${applicationName}"
-        android:icon="@drawable/icon_andr">
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:exported="true"
