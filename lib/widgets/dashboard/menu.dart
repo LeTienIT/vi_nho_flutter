@@ -4,12 +4,36 @@ import 'package:vi_nho/core/const_running.dart';
 import 'package:vi_nho/core/tool.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 
-class Menu extends StatelessWidget{
+class Menu extends StatefulWidget{
   const Menu({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _Menu();
+  }
+}
+
+class _Menu extends State<Menu>{
+  String cache = '...';
+  @override
+  void initState() {
+    super.initState();
+    loadSizeCache();
+
+  }
+  void loadSizeCache() async{
+    final sizeBytes = await getCacheSizeInBytes();
+    final sizeReadable = formatBytes(sizeBytes);
+    setState(() {
+      cache = sizeReadable;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
     final year = DateTime.now().year;
+
 
     return Column(
       children: [
@@ -49,7 +73,7 @@ class Menu extends StatelessWidget{
                           Navigator.pushNamedAndRemoveUntil(
                               context,
                               '/dashboard-week',
-                              (router) => false,
+                                  (router) => false,
                               arguments:{
                                 'week' : Running.dashboardWeek > 0 ? Running.dashboardWeek : Tool.getWeekOfYear(DateTime.now()),
                                 'year' : year,
@@ -116,15 +140,51 @@ class Menu extends StatelessWidget{
                   ),
                 ],
               ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Cài đặt giao diện'),
-                  onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
-                ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Cài đặt giao diện'),
+                onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
+              ),
               ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text('Hướng dẫn'),
                 onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/about', (route) => false),
+              ),
+              ListTile(
+                leading: const Icon(Icons.cleaning_services_sharp),
+                title: Text('Dọn dẹp bộ nhớ: $cache'),
+                onTap: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Xác nhận'),
+                      content: const Text(
+                        'Xác nhận dọn dẹp bộ nhớ tạm thời của ứng dụng.\n'
+                            'Việc này không ảnh hưởng đến ứng dụng hiện tại\n'
+                            'và các ứng dụng khác.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Hủy'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          child: const Text('Xóa'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirm == true) {
+                    await cleanOnlyCache();
+                    loadSizeCache();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Dọn dẹp thành công!')),
+                    );
+                  }
+                },
               ),
             ],
           ),

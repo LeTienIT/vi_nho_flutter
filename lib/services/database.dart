@@ -81,6 +81,13 @@ class DatabaseService{
     await db.insert(DBConstants.tableCategory, {DBConstants.columnName: 'Hóa đơn'});
   }
 
+  Future<void> close() async {
+    if (_db != null) {
+      await _db!.close();
+      _db = null;
+    }
+  }
+
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async{
     if(oldVersion < newVersion){
 
