@@ -49,7 +49,7 @@ class TransactionVM extends ChangeNotifier{
   Future<void> updateTransaction(TransactionModel t, int id) async{
     await _db.update(t, id);
 
-    int indexPrivate =_transactionList.indexWhere((t) => t.id == id) as int;
+    int indexPrivate =_transactionList.indexWhere((t) => t.id == id);
     if(indexPrivate != -1){
       _transactionList[indexPrivate] = t;
       if(_filterCondition == null){
@@ -167,10 +167,10 @@ class TransactionVM extends ChangeNotifier{
     final savedTransactions = _transactionList.where(
             (t) => t.savingID == plan.id!
     ).toList();
-    double tatolSaved = 0;
+    double tatolSaved = 0, soDaNop = 0;
     for (var t in savedTransactions) {
       tatolSaved+=t.amount;
-      // print("saved: $tatolSaved - ${t.category} - ${t.amount} - ${t.type}");
+      soDaNop+=t.amount;
     }
     List<DateTime> dates = Tool.getDaysInPeriodOfTime(plan.ngayBD, plan.ngayKT, plan.chuKy);
     DateTime now = DateTime.now();
@@ -193,6 +193,7 @@ class TransactionVM extends ChangeNotifier{
         double tatoal = 0;
         for (var t in listSavedByD) {
           tatoal += t.amount;
+          tatolSaved -= t.amount;
         }
         double requiredAmount = 0;
         if(plan.tenKeHoach == 'fixedUntilLunarNewYear'){
@@ -204,19 +205,29 @@ class TransactionVM extends ChangeNotifier{
             requiredAmount = plan.tienMoiKy;
         }
 
-        if(tatoal > requiredAmount){
+        if(tatoal >= requiredAmount){
           tongDu += tatoal - requiredAmount;
         }
-        else if(tatoal < requiredAmount){
+        else {
           tongNo += requiredAmount - tatoal;
           soNgayThieu[d] = requiredAmount - tatoal;
         }
       }
       else{
-        tongNo += plan.tienMoiKy;
-        soNgayThieu[d] = plan.tienMoiKy;
+        double requiredAmount = 0;
+        if(plan.tenKeHoach == 'fixedUntilLunarNewYear'){
+          int tuanHienTai = Tool.getWeekOfYear(d);
+          requiredAmount = tuanHienTai * 10000;
+        }
+        else
+        {
+          requiredAmount = plan.tienMoiKy;
+        }
+        tongNo += requiredAmount;
+        soNgayThieu[d] = requiredAmount;
       }
     }
+
     if(tongDu >= tongNo){
       soNgayThieu.clear();
       danhgia = '🎉 Tuyệt vời! Bạn đang hoàn thành kế hoạch tiết kiệm rất tốt!\n';
@@ -235,20 +246,35 @@ class TransactionVM extends ChangeNotifier{
         ⚠️ Kế hoạch tiết kiệm của bạn đang bị **chậm tiến độ**.\n
         📌 Hãy kiểm tra lịch phía dưới: các ngày bị **thiếu/hoặc chưa nộp** được đánh dấu ❌ (màu đỏ).\n
         💡 Đừng lo! Bạn vẫn còn thời gian để điều chỉnh và hoàn thành đúng hạn.\n
-        ⏳ Hãy bắt đầu nộp bổ sung ngay hôm nay nhé!\n
+        ⏳ Hãy bắt đầu nộp bổ sung ${tongNo - tongDu} ngay hôm nay nhé!\n
         🎯 Chúc bạn sớm hoàn thành mục tiêu! 🚀
        ''';
       final List<DateTime> keysToRemove = [];
 
-      for (var entry in soNgayThieu.entries) {
+      for (var entry in soNgayThieu.entries.toList()..sort((a,b) => a.key.compareTo(b.key))) {
         final no = entry.value;
-        if (tongDu - no >= 0) {
-          tongDu -= no;
+        if (tatolSaved - no >= 0) {
+          tatolSaved -= no;
           keysToRemove.add(entry.key); // gom lại
         }
       }
       for (var key in keysToRemove) {
         soNgayThieu.remove(key);
+      }
+      if(soNgayThieu.isEmpty){
+        danhgia = '🎉 Tuyệt vời! Bạn đang hoàn thành kế hoạch tiết kiệm rất tốt!\n';
+        if(tatolSaved > 0){
+          danhgia += '🌟 Không chỉ đúng tiến độ, bạn còn vượt chỉ tiêu với số tiền nộp dư: $tatolSaved — một nỗ lực xuất sắc!\n'
+              '🤣 HAY LÀ BẠN NỘP TRƯỚC CHO CÁC KỲ TIẾP THEO.\n'
+              '🤣😂 Hì, không quan trọng, dù sao:\n'
+              '👍👑😉 BẠN ĐANG LÀM RẤT TỐT KẾ HOẠCH CỦA MÌNH!\n';
+        }
+        danhgia += '🔥 Hãy tiếp tục duy trì phong độ này và về đích thành công nhé!\n💪 CHÚC BẠN THÀNH CÔNG!';
+        if(plan.ngayKT.year == now.year && plan.ngayKT.month==now.month&&plan.ngayKT.day==now.day){
+          danhgia = '🎉 TUYỆT VỜI. CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH KẾ HOẠCH TIẾT KIỆM LẦN NÀY.\n. '
+              '🌟 BẠN RẤT XUẤT SẮC, RẤT KIÊN TRÌ, HÃY TẬN HƯỞNG THÀNH QUẢ.\n '
+              '🔥 À ĐỪNG QUÊN QUAY LẠI VÀO NGÀY MAI KHI BẠN CÓ KẾ HOẠCH MỚI.';
+        }
       }
       if(plan.ngayKT.year == now.year && plan.ngayKT.month==now.month&&plan.ngayKT.day==now.day){
         danhgia = '⚠️ HEY! HÔM NAY LÀ NGÀY CUỐI CÙNG CỦA KẾ HOẠCH TIẾT KIỆM NÀY RÙI.\n'
@@ -270,8 +296,8 @@ class TransactionVM extends ChangeNotifier{
 
     return {
       'ten': ten,
-      'tongDaNop': tatolSaved,
-      'daHoanThanh': tatolSaved / plan.tongSoTien,
+      'tongDaNop': soDaNop,
+      'daHoanThanh': soDaNop / plan.tongSoTien,
       'tongChuKy': tongChuKy,
       'danhSachNgayCanNop': dates,
       'danhSachNgayNopThieu': soNgayThieu,

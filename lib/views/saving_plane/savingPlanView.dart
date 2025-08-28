@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vi_nho/models/planModel.dart';
@@ -57,7 +56,7 @@ class _SavingPlanView extends State<SavingPlanView> {
                           color: Theme.of(context).colorScheme.onErrorContainer
                       ),
                     onEnter: (click){
-
+                      Navigator.pushNamed(context, '/plan-list');
                     }
                   )
                 ]
@@ -343,6 +342,9 @@ class _SavingPlanView extends State<SavingPlanView> {
               InfoRow(label: 'Số tiết kiệm tiếp theo', content: NumberFormat.currency(locale: 'vi').format(data['soTienNopTiepTheo'])),
               const SizedBox(height: 12),
             ],
+
+            InfoRow(label: 'Số tiết kiệm hiện tại: ', content: NumberFormat.currency(locale: 'vi').format(data['tongDaNop'])),
+            SizedBox(height: 8,),
 
             Text('Tiến độ tiết kiệm', style: Theme.of(context).textTheme.titleMedium ),
             const SizedBox(height: 6),
