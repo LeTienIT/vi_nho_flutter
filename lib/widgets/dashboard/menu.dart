@@ -34,10 +34,9 @@ class _Menu extends State<Menu>{
     final transactionVM = context.watch<TransactionVM>();
     final year = DateTime.now().year;
 
-
     return Column(
       children: [
-        SizedBox(height: 10),
+        SizedBox(height: 50),
         Text(
           'Menu',
           style: TextStyle(
@@ -46,7 +45,6 @@ class _Menu extends State<Menu>{
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 10),
         Expanded(
           child: ListView(
             children: [
@@ -65,6 +63,7 @@ class _Menu extends State<Menu>{
                     leading: Icon(Icons.analytics_outlined),
                     title: const Text('Báo cáo'),
                     childrenPadding: EdgeInsets.only(left: 16),
+                    initiallyExpanded: true,
                     children: [
                       ListTile(
                         leading: Icon(Icons.dashboard),

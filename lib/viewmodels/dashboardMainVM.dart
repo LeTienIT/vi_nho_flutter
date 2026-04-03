@@ -50,8 +50,8 @@ class DashboardMainViewModel extends ChangeNotifier{
   double totalExpense = 0;
   double get balance => totalIncome - totalExpense;
   late double percentIn, percentEx;
-  Map<String, double> categoryChart = {}; // PieChart
-  List<FlSpot> dailyChart = []; // LineChart
+  Map<String, double> categoryChart = {};
+  List<FlSpot> dailyChart = [];
   List<MapEntry<String, double>> topCategory = [];
   late List<TransactionModel> listTransactionSort;
 
@@ -91,7 +91,7 @@ class DashboardMainViewModel extends ChangeNotifier{
 
     listTransactionSort = listTransactionWeek..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransactionSort = listTransactionSort.take(5).toList();
+    // listTransactionSort = listTransactionSort.take(5).toList();
 
     if(weekNumber > 1){
 
@@ -115,11 +115,7 @@ class DashboardMainViewModel extends ChangeNotifier{
     }
   }
 
-  List<TransactionModel> filterTransactionsByWeek(
-      List<TransactionModel> transactions,
-      DateTime startDate,
-      DateTime endDate,
-      ) {
+  List<TransactionModel> filterTransactionsByWeek(List<TransactionModel> transactions, DateTime startDate, DateTime endDate,) {
     final start = DateTime(startDate.year, startDate.month, startDate.day);
     final end = DateTime(endDate.year, endDate.month, endDate.day);
 

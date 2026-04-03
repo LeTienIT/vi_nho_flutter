@@ -16,6 +16,13 @@ class TransactionVM extends ChangeNotifier{
   List<TransactionModel> get listCore => _transactionList;
   List<TransactionModel> get transactionList => _transactionFilter;
 
+  DateTime? startDate;
+  DateTime? endDate;
+  int? year;
+  int? month;
+  int? day;
+  int? week;
+
   void setActiveItem(int? id) {
     _activeItemId = id;
     notifyListeners();
@@ -42,7 +49,7 @@ class TransactionVM extends ChangeNotifier{
       notifyListeners();
     }
     else{
-      _filterTransaction();
+      filterTransaction();
     }
   }
 
@@ -57,7 +64,7 @@ class TransactionVM extends ChangeNotifier{
         notifyListeners();
       }
       else{
-        _filterTransaction();
+        filterTransaction();
       }
     }
   }
@@ -70,74 +77,126 @@ class TransactionVM extends ChangeNotifier{
       notifyListeners();
     }
     else{
-      _filterTransaction();
+      filterTransaction();
     }
   }
 
-  void _filterTransaction(){
-    if(_filterCondition == null){
-      _transactionFilter = List.from(_transactionList);
-      notifyListeners();
-      return;
-    }
+  void filterTransaction() {
+    final now = DateTime.now();
 
-    final condition = _filterCondition!;
-    _transactionFilter = _transactionList.where((e){
-      switch(condition.field){
-        case FilterField.month:
-          final date = e.dateTime;
-          final filterValue = condition.value as int;
-          return date.month == filterValue && date.year == DateTime.now().year;
-        case FilterField.amount:
-          final amount = e.amount;
-          final filterValue = condition.value as double;
-          switch (condition.operator) {
-            case FilterOperator.greaterThan:
-              return amount > filterValue;
-            case FilterOperator.lessThan:
-              return amount < filterValue;
-            case FilterOperator.equal:
-              return amount == filterValue;
-            default:
-              return true;
-          }
-        case FilterField.date:
-          final date = e.dateTime;
-          final filterValue = condition.value as DateTime;
-          return date.year == filterValue.year &&
-              date.month == filterValue.month &&
-              date.day == filterValue.day;
+    _transactionFilter = _transactionList.where((e) {
+      final date = e.dateTime;
 
-        case FilterField.category:
-          final cat = e.category.toLowerCase();
-          final val = (condition.value as String).toLowerCase();
-          return cat.contains(val);
+      if (startDate != null && endDate != null) {
+        final start = DateTime(startDate!.year, startDate!.month, startDate!.day);
+        final end = DateTime(endDate!.year, endDate!.month, endDate!.day, 23, 59, 59, 999,);
 
-        case FilterField.note:
-          if(e.note != null){
-            final note = e.note!.toLowerCase();
-            final val = (condition.value as String).toLowerCase();
-            return note.contains(val);
-          }
-          else {
-            return false;
-          }
+        return !date.isBefore(start) && !date.isAfter(end);
       }
+
+      if (year != null || month != null || day != null) {
+        final y = year;
+        final m = month;
+        final d = day;
+
+        if (y != null && date.year != y) return false;
+
+        if (m != null) {
+          final usedYear = y ?? now.year;
+          if (date.year != usedYear || date.month != m) return false;
+        }
+
+        if (d != null) {
+          final usedYear = y ?? now.year;
+          final usedMonth = m ?? now.month;
+
+          if (date.year != usedYear || date.month != usedMonth || date.day != d) return false;
+        }
+      }
+
+      else if (week != null) {
+        if (_weekOfMonth(date) != week) return false;
+      }
+
+      return true;
     }).toList();
 
     notifyListeners();
   }
-
-  void applyFilter(FilterCondition? condition){
-    _filterCondition = condition;
-    _filterTransaction();
+  int _weekOfMonth(DateTime date) {
+    final firstDay = DateTime(date.year, date.month, 1);
+    final offset = firstDay.weekday - 1;
+    return ((date.day + offset) / 7).ceil();
   }
 
   void clearFilter(){
-    _filterCondition = null;
-    _filterTransaction();
+    startDate=null;
+    endDate=null;
+    year=null;
+    month=null;
+    day=null;
+    week=null;
+    filterTransaction();
   }
 
+  void setDateRange(DateTime start, DateTime end) {
+    startDate = start;
+    endDate = end;
+
+    year = null;
+    month = null;
+    day = null;
+    week = null;
+
+    notifyListeners();
+  }
+
+  void setYear(int value) {
+    year = value;
+
+    startDate = null;
+    endDate = null;
+    week = null;
+
+    notifyListeners();
+  }
+
+  void setMonth(int value) {
+    month = value;
+
+    year ??= DateTime.now().year;
+
+    startDate = null;
+    endDate = null;
+    week = null;
+
+    notifyListeners();
+  }
+
+  void setDay(int value) {
+    day = value;
+
+    final now = DateTime.now();
+    year ??= now.year;
+    month ??= now.month;
+
+    startDate = null;
+    endDate = null;
+    week = null;
+
+    notifyListeners();
+  }
+  void setWeek(int value) {
+    week = value;
+
+    startDate = null;
+    endDate = null;
+    year = null;
+    month = null;
+    day = null;
+
+    notifyListeners();
+  }
   void deleteSavingID(int id){
     _transactionList.removeWhere((t)=>t.savingID == id);
     if(_filterCondition == null){
@@ -145,7 +204,7 @@ class TransactionVM extends ChangeNotifier{
       notifyListeners();
     }
     else{
-      _filterTransaction();
+      filterTransaction();
     }
   }
 

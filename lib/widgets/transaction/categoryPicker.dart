@@ -1,41 +1,95 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vi_nho/models/categoryModel.dart';
-import 'package:vi_nho/viewmodels/categoryVM.dart';
 
-class CategoryPicker extends StatelessWidget{
-  CategoryPicker({super.key, this.enable = true});
-  bool enable;
+import '../../models/categoryModel.dart';
+import '../../viewmodels/categoryVM.dart';
+
+class CategoryPicker extends StatelessWidget {
+  final bool enable;
+
+  const CategoryPicker({super.key, this.enable = true});
+
   @override
   Widget build(BuildContext context) {
     final categoryVM = context.watch<CategoryVM>();
-    // print(categoryVM.categorySelect == null ? 'null' : categoryVM.categorySelect!.name);
+
     return Padding(
-        padding: EdgeInsets.only(top: 16, right: 16, left: 5),
-        child:  DropdownButtonFormField<CategoryModel>(
-          value: categoryVM.categorySelect,
-          decoration: InputDecoration(
-              labelText: 'Chọn danh mục',
-              border: OutlineInputBorder()
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: DropdownSearch<CategoryModel>(
+        enabled: enable,
+        items: categoryVM.categoryList,
+        selectedItem: categoryVM.categorySelect,
+        itemAsString: (c) => c.name,
+
+        onChanged: (value) {
+          if (value != null) {
+            categoryVM.setSelect(value);
+          }
+        },
+
+        validator: (value) =>
+        value == null ? 'Vui lòng chọn danh mục' : null,
+
+        dropdownDecoratorProps: DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(
+            labelText: 'Danh mục',
+            hintText: 'Chọn danh mục',
+            isDense: true, // 🔥 giảm chiều cao
+            filled: true,
+            fillColor: Colors.grey.shade100,
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
           ),
-          items: categoryVM.categoryList.map((c){
-            return DropdownMenuItem<CategoryModel>(
-                value: c,
-                child: Text(c.name)
+        ),
+
+        /// 🔥 POPUP INLINE (KHÔNG PHẢI SHEET)
+        popupProps: PopupProps.menu(
+          showSearchBox: true,
+
+          // 🔥 giới hạn chiều cao (rất quan trọng)
+          constraints: const BoxConstraints(maxHeight: 250),
+
+          searchFieldProps: TextFieldProps(
+            decoration: InputDecoration(
+              hintText: 'Tìm...',
+              prefixIcon: const Icon(Icons.search, size: 18),
+              isDense: true,
+              contentPadding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+
+          itemBuilder: (context, item, isSelected) {
+            return Container(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              color: isSelected
+                  ? Theme.of(context).primaryColor.withOpacity(0.08)
+                  : null,
+              child: Text(
+                item.name,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight:
+                  isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
             );
-          }).toList(),
-          onChanged: enable ? (value){
-            if(value != null) {
-              categoryVM.setSelect(value);
-            }
-          } : null,
-          validator: (value) {
-            if (value == null) {
-              return 'Vui lòng chọn danh mục';
-            }
-            return null;
           },
         ),
+
+        dropdownButtonProps: const DropdownButtonProps(
+          icon: Icon(Icons.keyboard_arrow_down, size: 20),
+        ),
+      ),
     );
   }
 }

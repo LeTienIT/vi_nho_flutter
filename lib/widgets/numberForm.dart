@@ -6,25 +6,46 @@ class NumberForm extends StatelessWidget {
   final String title;
   final String? hint;
   final String? Function(String?)? validator;
-  bool readOnly;
+  final bool readOnly;
 
-  NumberForm({super.key, required this.amount, this.validator, required this.title, this.hint='', this.readOnly = false});
+  const NumberForm({
+    super.key,
+    required this.amount,
+    required this.title,
+    this.hint,
+    this.validator,
+    this.readOnly = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.all(10),
-        child: TextFormField(
-          controller: amount,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              label: Text(title),
-              hintText: hint
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: TextFormField(
+        controller: amount,
+        keyboardType: TextInputType.number,
+        readOnly: readOnly,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: title,
+          hintText: hint,
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
           ),
-          validator: validator,
-          readOnly:  readOnly,
-        )
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+          ),
+        ),
+      ),
     );
   }
 }

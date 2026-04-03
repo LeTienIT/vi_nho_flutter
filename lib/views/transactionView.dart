@@ -24,7 +24,6 @@ class _TransactionListView extends State<TransactionListView>{
   @override
   Widget build(BuildContext context) {
     final transactionVM = context.watch<TransactionVM>();
-    final filterVM = context.watch<FilterVM>();
     final categoryVM = context.watch<CategoryVM>();
     final planVM = context.watch<PlanVM>();
 
@@ -40,14 +39,26 @@ class _TransactionListView extends State<TransactionListView>{
           ),
         ),
         centerTitle: true,
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.filter_alt),
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+            ),
+          ),
+        ],
       ),
       drawer: Drawer(child: Menu(),),
+      endDrawer: FractionallySizedBox(
+        widthFactor: 0.66,
+        child: FilterSection(vm: transactionVM,),
+      ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          FilterSection(filterVM: filterVM, transactionVM: transactionVM,),
-          Divider(),
           if(transactionVM.transactionList.isEmpty)...[
             Container(
               padding: EdgeInsets.all(16),
