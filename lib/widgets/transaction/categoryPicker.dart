@@ -7,15 +7,15 @@ import '../../viewmodels/categoryVM.dart';
 
 class CategoryPicker extends StatelessWidget {
   final bool enable;
-
-  const CategoryPicker({super.key, this.enable = true});
+  final EdgeInsetsGeometry padding;
+  const CategoryPicker({super.key, this.enable = true, this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8)});
 
   @override
   Widget build(BuildContext context) {
     final categoryVM = context.watch<CategoryVM>();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: padding,
       child: DropdownSearch<CategoryModel>(
         enabled: enable,
         items: categoryVM.categoryList,

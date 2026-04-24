@@ -22,6 +22,7 @@ class TransactionVM extends ChangeNotifier{
   int? month;
   int? day;
   int? week;
+  String? categoryFilter;
 
   void setActiveItem(int? id) {
     _activeItemId = id;
@@ -121,6 +122,11 @@ class TransactionVM extends ChangeNotifier{
       return true;
     }).toList();
 
+    if(categoryFilter!=null){
+      _transactionFilter = _transactionList.where((e) {
+        return e.category == categoryFilter;
+      }).toList();
+    }
     notifyListeners();
   }
   int _weekOfMonth(DateTime date) {
@@ -136,6 +142,7 @@ class TransactionVM extends ChangeNotifier{
     month=null;
     day=null;
     week=null;
+    categoryFilter=null;
     filterTransaction();
   }
 
@@ -195,6 +202,11 @@ class TransactionVM extends ChangeNotifier{
     month = null;
     day = null;
 
+    notifyListeners();
+  }
+
+  void setCategoryFilter(String? value){
+    categoryFilter = value;
     notifyListeners();
   }
   void deleteSavingID(int id){

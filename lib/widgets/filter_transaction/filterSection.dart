@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../viewmodels/categoryVM.dart';
 import '../../viewmodels/transactionVM.dart';
+import '../transaction/categoryPicker.dart';
 
 class FilterSection extends StatefulWidget {
   final TransactionVM vm;
@@ -36,6 +39,17 @@ class _FilterSectionState extends State<FilterSection> {
     day = vm.day;
 
     week = vm.week;
+
+    final categoryVM = context.read<CategoryVM>();
+    if(vm.categoryFilter!=null) {
+      final selectedCategory = categoryVM.findName(vm.categoryFilter!);
+      if (selectedCategory != null) {
+        categoryVM.categorySelect = selectedCategory;
+      }
+    }
+    else{
+      categoryVM.categorySelect = null;
+    }
   }
 
   String get rangeText {
@@ -239,6 +253,7 @@ class _FilterSectionState extends State<FilterSection> {
   @override
   Widget build(BuildContext context) {
     final vm = widget.vm;
+    final categoryVM = context.watch<CategoryVM>();
 
     return Material(
       color: Colors.white,
@@ -264,6 +279,14 @@ class _FilterSectionState extends State<FilterSection> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Center(
+                      child: const Text(
+                        "Thởi gian",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
                     /// RANGE
                     const Text(
                       "Khoảng thời gian",
@@ -430,6 +453,41 @@ class _FilterSectionState extends State<FilterSection> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20),
+
+                    Center(
+                      child: const Text(
+                        "Phân loại",
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    const Text(
+                      "Loại giao dịch",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CategoryPicker(enable: true, padding: const EdgeInsetsGeometry.all(0),),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              categoryVM.setSelect(null);
+                            },
+                            icon: Icon(Icons.close, color: Colors.redAccent),
+                          ),
+                        )
+                      ],
+                    )
+
                   ],
                 ),
               ),
@@ -455,14 +513,20 @@ class _FilterSectionState extends State<FilterSection> {
                         /// APPLY
                         if (startDate != null && endDate != null) {
                           vm.setDateRange(startDate!, endDate!);
-                        } else if (year != null ||
-                            month != null ||
-                            day != null) {
+                        } else if (year != null || month != null || day != null) {
                           if (year != null) vm.setYear(year!);
                           if (month != null) vm.setMonth(month!);
                           if (day != null) vm.setDay(day!);
                         } else if (week != null) {
                           vm.setWeek(week!);
+                        }
+
+                        final category = context.read<CategoryVM>().categorySelect;
+                        if(category!=null) {
+                          vm.setCategoryFilter(category.name);
+                        }
+                        else{
+                          vm.setCategoryFilter(null);
                         }
 
                         vm.filterTransaction();

@@ -202,6 +202,35 @@ class AboutView extends StatelessWidget{
                 ),
               ],
             ),
+            ExpansionTile(
+              leading: Icon(Icons.backup),
+              title: Text('3. Sao lưu và khôi phuc (Android)', style: Theme.of(context).textTheme.titleMedium,),
+              childrenPadding: EdgeInsets.only(left: 25),
+              children: [
+                Text(
+                  '+, SỬ DỤNG TRONG TRƯỜNG HỢP MUỐN ĐỔI TỪ ĐIỆN THOẠI NÀY SANG ĐIỆN THOẠI KHÁC',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '+, Quá trình có thể gây giật, lag app lúc thực hiện',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 8),
+
+                _buildGuideItem(context, index: 1, title: 'Sao lưu', description:
+                '\n'
+                    ' - Thực hiện theo hướng dẫn \n'
+                    ' - Ở mỗi bước chỉ ấn 1 lần và đợi thiết bị phản hổi - không ấn liên tục\n'
+                    ' - Thời gian tiến trình tuỳ thuộc vào độ nặng của cơ sở dữ liệu\n'
+                    ' - KHÔNG THOÁT MÀN HÌNH HOẶC APP TRONG QUÁ TRÌNH'),
+                _buildGuideItem(context, index: 2, title: 'Khôi phục', description:
+                '\n'
+                    ' - Tương tự như sao lưu - chọn đúng file - đúng với app náy\n'
+                    ' - Sau khi khôi phục xong hay đóng hẳn app rồi mở lại\n'
+                ),
+              ],
+            ),
           ],
         )
       ),
@@ -255,12 +284,7 @@ class AboutView extends StatelessWidget{
 
             // Nội dung chính
             Text(
-              'Hì hì, xin phép mọi người cho mình "quảng cáo" một chút nha 😄\n'
-                  'Mình là một sinh viên ngành Công nghệ Thông tin, đã tốt nghiệp năm 2024.\n'
-                  'Ban đầu mình làm về Web với tư cách Web developer, nhưng từ năm 2025 mình bắt đầu học lập trình app với Android Studio và Java thuần.\n'
-                  'Và gần đây mình đang làm quen với Flutter.\n'
-                  'Ứng dụng bạn đang dùng chính là một sản phẩm mình tự học và tự làm trong quá trình đó.\n'
-                  'Vậy nên nếu có gì thiếu sót, mình rất mong nhận được góp ý từ mọi người!',
+              'Hì hì, cái này là dự án thời sinh viên, mới học tạo app -> còn nhiều lỗi. Chỉ mang tính chất học tập thôi.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
             ),
             const SizedBox(height: 12),
@@ -278,7 +302,7 @@ class AboutView extends StatelessWidget{
                   const Icon(Icons.description, size: 20, color: Colors.blueAccent),
                   const SizedBox(width: 6),
                   Text(
-                    'Xem CV của mình tại đây',
+                    'Hẹ Hẹ',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.blueAccent,
                       decoration: TextDecoration.underline,

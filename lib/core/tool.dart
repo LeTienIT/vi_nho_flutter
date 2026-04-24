@@ -8,6 +8,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:math';
 
+import 'clean_cache.dart';
+
 class Tool{
   /// Lấy ngày bắt đầu và kết thúc của 1 tuần
   static List<DateTime> getWeekRange(int year, int week) {
@@ -127,31 +129,6 @@ class Tool{
     return dates;
   }
 }
-Future<void> cleanOnlyCache() async {
-  try {
-    // 1. Xóa thư mục cache tạm thời (temporary directory)
-    final tempDir = await getTemporaryDirectory();
-    if (await tempDir.exists()) {
-      await tempDir.delete(recursive: true);
-      await tempDir.create(); // Tạo lại thư mục rỗng
-    }
-
-    // 2. Xóa cache của các package (image, network...)
-    await DefaultCacheManager().emptyCache(); // cached_network_image
-    // Xóa cache của Dio (nếu dùng)
-    final dioCacheDir = Directory('${tempDir.path}/dio');
-    if (await dioCacheDir.exists()) await dioCacheDir.delete(recursive: true);
-
-    // 3. Xóa cache WebView (nếu app dùng WebView)
-    final appDir = await getApplicationSupportDirectory();
-    final webViewCacheDir = Directory('${appDir.path}/WebKit');
-    if (await webViewCacheDir.exists()) {
-      await webViewCacheDir.delete(recursive: true);
-    }
-  } catch (e) {
-    throw Exception(e);
-  }
-}
 
 Future<int> getCacheSizeInBytes() async {
   int totalSize = 0;
@@ -185,3 +162,4 @@ String formatBytes(int bytes, [int decimals = 2]) {
   final i = (bytes > 0) ? (log(bytes) / log(1024)).floor() : 0;
   return '${(bytes / pow(1024, i)).toStringAsFixed(decimals)} ${sizes[i]}';
 }
+

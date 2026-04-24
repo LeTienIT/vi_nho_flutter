@@ -4,6 +4,8 @@ import 'package:vi_nho/core/const_running.dart';
 import 'package:vi_nho/core/tool.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 
+import '../../core/clean_cache.dart';
+
 class Menu extends StatefulWidget{
   const Menu({super.key});
 
@@ -145,6 +147,11 @@ class _Menu extends State<Menu>{
                 onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
               ),
               ListTile(
+                leading: const Icon(Icons.backup),
+                title: const Text('Sao lưu dữ liệu'),
+                onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/backup', (route) => false),
+              ),
+              ListTile(
                 leading: const Icon(Icons.person),
                 title: const Text('Hướng dẫn'),
                 onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/about', (route) => false),
@@ -177,11 +184,21 @@ class _Menu extends State<Menu>{
                   );
 
                   if (confirm == true) {
-                    await cleanOnlyCache();
-                    loadSizeCache();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Dọn dẹp thành công!')),
-                    );
+                    try {
+                      final result = await cleanOnlyCache();
+
+                      if (result.errors.isNotEmpty) {
+                        debugPrint('Lỗi: ${result.errors.join('\n')}');
+                      }
+                      else{
+                        loadSizeCache();
+                        showTopToast(context, 'Đã dọn ${result.deletedMB}MB bộ nhớ đệm');
+                      }
+
+                    } catch (e) {
+                      debugPrint('cleanOnlyCache thất bại: $e');
+                    }
+
                   }
                 },
               ),
@@ -192,4 +209,56 @@ class _Menu extends State<Menu>{
     );
   }
 
+  void showTopToast(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) {
+        final topPadding = MediaQuery.of(context).padding.top;
+
+        return Positioned(
+          top: topPadding + 16,
+          left: 16,
+          right: 16,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade600,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.15),
+                    blurRadius: 8,
+                  )
+                ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
+  }
 }

@@ -2,7 +2,7 @@ name: vi_nho
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 1.2.3+25
+version: 0.0.1+1
 
 environment:
   sdk: ^3.7.2
@@ -18,7 +18,8 @@ dependencies:
   path: ^1.9.0
   provider: ^6.1.0
   intl: ^0.20.0
-
+  flutter_riverpod: ^2.6.1
+  file_picker: ^10.2.0
   shared_preferences: ^2.5.3
 
   flutter_speed_dial: ^7.0.0

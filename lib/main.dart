@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vi_nho/backup/backup_screen.dart';
 import 'package:vi_nho/models/categoryModel.dart';
 import 'package:vi_nho/services/sharedPreference.dart';
 import 'package:vi_nho/viewmodels/categoryVM.dart';
@@ -130,6 +131,10 @@ class MyApp extends StatelessWidget {
           case '/plan-list':
             return MaterialPageRoute(
               builder: (_) => PlanView(),
+            );
+          case '/backup':
+            return MaterialPageRoute(
+              builder: (_) => BackupScreen(),
             );
           case '/about':
             return MaterialPageRoute(

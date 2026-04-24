@@ -19,7 +19,7 @@ class CategoryVM extends ChangeNotifier{
 
   List<CategoryModel> get categoryList => _categoryList;
 
-  void setSelect(CategoryModel c){
+  void setSelect(CategoryModel? c){
     categorySelect = c;
     notifyListeners();
   }

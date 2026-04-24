@@ -1,0 +1,394 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
+import '../services/database.dart';
+import '../widgets/dashboard/menu.dart';
+import 'backup_controller.dart';
+
+class BackupScreen extends ConsumerStatefulWidget {
+  const BackupScreen({super.key});
+
+  @override
+  ConsumerState<BackupScreen> createState() {
+    return _BackupScreenState();
+  }
+
+}
+
+class _BackupScreenState extends ConsumerState<BackupScreen> {
+  String selectedTab = 'backup'; // backup | restore
+  bool isProcessing = false;
+  String? fileBackup;
+  File? selectedFile;
+
+  void _onBackupPressed() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Xác nhận sao lưu dữ liệu'),
+        content: const Text(
+          'Vui lòng không thoát hay tắt ứng dụng trong quá trình sao lưu.\n\n'
+              '-  Khi file nặng > 1GB, quá trình lưu file có thể bị giật, lang, ...\n'
+              '-  Trong quá trình đó, không được thoát hay tắt app. Sau khi lưu thành công, app sẽ trở về giao diện\n\n'
+              'Bạn nên sử dụng tính năng dọn dẹp bộ nhớ sau khi tạo file backup.',
+          style: TextStyle(
+            color: Colors.red,
+            fontStyle: FontStyle.italic,
+            fontSize: 16
+          ),
+
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Xác nhận'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    setState(() => isProcessing = true);
+
+    try {
+      // final db = ref.read(appDatabaseProvider);
+      // await db.close();
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+      File zipFile = await createBackupNative();
+      await saveLargeBackup(zipFile);
+      setState(() {
+        fileBackup = 'Đã tạo file sao lưu';
+      });
+      // await db.open();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sao lưu thành công! ')),
+      );
+    } on PlatformException catch (e) {
+      setState(() {
+        fileBackup = '${e.message}';
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi flatform: ${e.message}')),
+      );
+    } catch (e) {
+      setState(() {
+        fileBackup = e.toString();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi khi sao lưu: $e')),
+      );
+
+    } finally {
+      Navigator.pop(context);
+      if (mounted) setState(() => isProcessing = false);
+    }
+  }
+
+  Widget _buildBackupContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Tính năng sao lưu sẽ sao chép toàn bộ dữ liệu hiện tại của ứng dụng và lưu trữ.\n'
+              'Bạn có thể sử dụng dữ liệu lưu trữ đó để khôi phục lại dữ liệu này trên một thiết bị khác '
+              '(Khi bạn đổi máy mới).',
+          style: TextStyle(fontSize: 16),
+        ),
+        const SizedBox(height: 10,),
+        RichText(
+          text: TextSpan(
+              text: 'Mô tả',style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+              children: [
+                TextSpan(
+                    text: '\n - Sao lưu: Sẽ sao chép toàn bộ dữ liệu thành file.zip => dùng cho khôi phục',
+                    style: TextStyle(color: Colors.orange, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Sao lưu đồng bộ: ....',
+                    style: TextStyle(color: Colors.green, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+              ]
+          ),
+        ),
+        const SizedBox(height: 10),
+        const SizedBox(height: 10,),
+        RichText(
+          text: TextSpan(
+              text: 'Lưu ý',style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+              children: [
+                TextSpan(
+                    text: '\n - Trong quá trình sao lưu - không được thoát khỏi màn hình hiện tại.',
+                    style: TextStyle(color: Colors.orange, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Sau khi sao lưu xong sẽ hiển thị hộp thoại để lưu trữ file.',
+                    style: TextStyle(color: Colors.green, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Khi ấn lưu file - quá trình có thể bị đơ - hoặc giật tuỳ thuộc vào kích thước file.',
+                    style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Sau quá trình lưu file sẽ tự trở lại app.',
+                    style: TextStyle(color: Colors.green, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Không thao tác nhiều lần - hoặc đóng app đột ngột trong quá trình',
+                    style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+              ]
+          ),
+        ),
+        Text(
+            '(Chi tiết đọc bên mục khôi phục)',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontSize: 12)
+        ),
+        const SizedBox(height: 20),
+        Wrap(
+          alignment: WrapAlignment.spaceAround,
+          spacing: 10,
+          children: [
+            ElevatedButton.icon(
+              onPressed: Platform.isIOS ? null : isProcessing ? null : _onBackupPressed,
+              icon: const Icon(Icons.backup),
+              label: Platform.isIOS ? Text('Chưa phát triển IOS') : isProcessing ? Text('Đang sao lưu...') : Text('sao lưu'),
+            ),
+            ElevatedButton.icon(
+              onPressed: null,
+              icon: const Icon(Icons.lock),
+              label: RichText(text: TextSpan(
+                text: Platform.isIOS ? "Chưa phát triển IOS" : 'Đồng bộ',
+                children: [
+                  TextSpan(
+                    text: '\n   (khóa)',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.red,
+
+                    ),
+                  )
+                ]
+              )),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10,),
+        if (fileBackup != null) ...[
+          Text(
+            fileBackup!,
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ]
+
+      ],
+    );
+  }
+
+  Widget buildRestoreUI() {
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: 'Lưu ý',style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+              children: [
+                TextSpan(
+                  text: '\n - Dữ liệu được khôi phục sẽ ghi đè lên dữ liệu hiện tại. '
+                      '\n - Tức là các dữ liệu hiện tại của ứng dụng sẽ bị xóa bỏ và thay thế bằng dữ liệu được khôi phục.',
+                  style: TextStyle(color: Colors.redAccent, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Quá trình khôi phục có thể mất nhiều thời gian.'
+                        '\n - Tuỳ thuộc vào dung lượng file backup.',
+                    style: TextStyle(color: Colors.green, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Đảm bảo không đóng - thoát app trong quá trình khôi phục.',
+                    style: TextStyle(color: Colors.orange, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+                TextSpan(
+                    text: '\n - Sau khi khôi phục xong APP sẽ tự đóng - Nhưng chưa thoát hẳn.'
+                        '\n - Hãy mở các ứng dụng đang chạy và tắt hẳn app đi - giống vuốt lên để tắt các app khác.',
+                    style: TextStyle(color: Colors.red, fontStyle: FontStyle.italic, fontSize: 16)
+                ),
+              ]
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // RichText(
+          //   text: TextSpan(
+          //         text: 'Kiến nghị',style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+          //       children: [
+          //         TextSpan(
+          //             text: '\n - Sử dụng tính năng đồng bộ'
+          //                 '\n - Đồng bộ là thêm toàn bộ các dữ liệu cũ và không xóa dữ liệu hiện tại',
+          //             style: TextStyle(color: Colors.green, fontStyle: FontStyle.italic, fontSize: 16)
+          //         ),
+          //         TextSpan(
+          //             text: '\n <=> Với các dữ liệu bị xung đột, bạn sẽ lựa chọn 2 cách giải quyết'
+          //                 '\n - 1: Ghi đè lên dữ liệu hiện tại'
+          //                 '\n - 2: Bỏ qua dữ liệu khôi phục và sử dụng dữ liệu hiện tại',
+          //             style: TextStyle(color: Colors.orangeAccent, fontStyle: FontStyle.italic, fontSize: 16)
+          //         ),
+          //       ]
+          //   ),
+          // ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.folder_open),
+            label: Platform.isIOS ? const Text('Chưa phát triển IOS') : const Text('Chọn file backup (.zip)'),
+            onPressed: Platform.isIOS ? null : () async {
+              final file = await pickBackupZipNative();
+
+              if (file != null) {
+                setState(() {
+                  selectedFile = file;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          if (selectedFile != null)
+            Text(
+              'Đã chọn: ${p.basename(selectedFile!.path)}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )
+          else
+            const Text('Chưa chọn file nào'),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton.icon(
+                icon: const Icon(Icons.restore),
+                label: Platform.isIOS ? const Text('Chưa phát triển IOS') : const Text('Khôi phục'),
+                onPressed: Platform.isIOS ? null : selectedFile == null ? null : () async{
+                  if (selectedFile == null) return;
+
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                  );
+                  final db = DatabaseService();
+                  await db.close();
+
+                  final success = await restoreBackup(selectedFile!);
+
+                  Navigator.pop(context);
+                  if (success) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => AlertDialog(
+                        title: const Text('Khôi phục thành công'),
+                        content: const Text('App sẽ khởi động lại để áp dụng dữ liệu mới.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              if (Platform.isAndroid) {
+                                SystemNavigator.pop();
+                              } else if (Platform.isIOS) {
+                                exit(0);
+                              }
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('❌ Khôi phục thất bại')),
+                    );
+                  }
+                },
+              ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.lock),
+                label: RichText(text: TextSpan(
+                    text: 'Đồng bộ',
+                    children: [
+                      TextSpan(
+                        text: '\n   (khóa)',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.red,
+
+                        ),
+                      )
+                    ]
+                )),
+                onPressed: null,
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Sao lưu & khôi phục')),
+        drawer: const Drawer(child: Menu()),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ChoiceChip(
+                    avatar: Icon(Icons.restore_outlined),
+                    label: const Text('Sao lưu'),
+                    selected: selectedTab == 'backup',
+                    onSelected: (_) => setState(() => selectedTab = 'backup'),
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    avatar: Icon(Icons.cloud_sync_sharp),
+                    label: const Text('Khôi phục'),
+                    selected: selectedTab == 'restore',
+                    onSelected: (_) => setState(() => selectedTab = 'restore'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+
+              // Nội dung
+              if (selectedTab == 'backup')
+                _buildBackupContent()
+              else
+                buildRestoreUI(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

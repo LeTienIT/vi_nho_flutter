@@ -94,6 +94,11 @@ class _DashboardMainView extends State<DashboardMainView> {
 
             children: [
               SpeedDialChild(
+                child: const Icon(Icons.list_alt_outlined),
+                label: 'Danh sách',
+                onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/transaction-list', (route) => false),
+              ),
+              SpeedDialChild(
                 child: const Icon(Icons.add_shopping_cart),
                 label: 'Thêm giao dịch',
                 onTap: () {
