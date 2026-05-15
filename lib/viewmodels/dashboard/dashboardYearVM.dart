@@ -66,12 +66,13 @@ class DashboardYearVM extends ChangeNotifier{
     // Top category
     topCategories = categoryExpenseMap.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
+    topCategories = topCategories.take(50).toList();
 
     topMonthIn = monthInMap.entries.toList()..sort((a,b) => b.value.compareTo(a.value));
-    topMonthIn = topMonthIn.take(5).toList();
+    topMonthIn = topMonthIn.take(100).toList();
 
     topMonthEx = monthExMap.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
-    topMonthEx = topMonthEx.take(5).toList();
+    topMonthEx = topMonthEx.take(100).toList();
 
     final lastList = listTransaction.where((t) => t.dateTime.year == (year-1)).toList();
     if(lastList.isNotEmpty){

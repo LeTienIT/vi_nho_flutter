@@ -65,6 +65,13 @@ class DatabaseService{
     ''');
 
     await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${DBConstants.tableSetting} (
+        ${DBConstants.columnName} TEXT PRIMARY KEY,
+        ${DBConstants.columnData} TEXT
+      )
+    ''');
+
+    await db.execute('''
       ALTER TABLE ${DBConstants.tableTransaction}
       ADD COLUMN ${DBConstants.columnSavingId} INTEGER DEFAULT -1
     ''');
@@ -154,5 +161,81 @@ class DatabaseService{
   Future<int> deleteP(int id) async{
     (await db).delete(DBConstants.tableTransaction,where: '${DBConstants.columnSavingId} = ?', whereArgs: [id]);
     return (await db).delete(DBConstants.tableSaving,where: '${DBConstants.columnId} = ?', whereArgs: [id]);
+  }
+
+  /// GET 1 VALUE
+  Future<String?> getSetting(String key) async {
+    final database = await db;
+
+    final result = await database.query(
+      DBConstants.tableSetting,
+      where: '${DBConstants.columnName} = ?',
+      whereArgs: [key],
+      limit: 1,
+    );
+
+    if (result.isNotEmpty) {
+      return result.first[DBConstants.columnData] as String?;
+    }
+    return null;
+  }
+
+  /// INSERT / UPDATE (UPSERT)
+  Future<void> setSetting(String key, String? value) async {
+    final database = await db;
+
+    await database.insert(
+      DBConstants.tableSetting,
+      {
+        DBConstants.columnName: key,
+        DBConstants.columnData: value,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// DELETE
+  Future<void> removeSetting(String key) async {
+    final database = await db;
+
+    await database.delete(
+      DBConstants.tableSetting,
+      where: '${DBConstants.columnName} = ?',
+      whereArgs: [key],
+    );
+  }
+
+  /// GET ALL
+  Future<Map<String, String?>> getAllSettings() async {
+    final database = await db;
+
+    final result = await database.query(DBConstants.tableSetting);
+
+    return {
+      for (var row in result)
+        row[DBConstants.columnName] as String:
+        row[DBConstants.columnData] as String?
+    };
+  }
+
+  /// CLEAR ALL
+  Future<void> clearSettings() async {
+    final database = await db;
+    await database.delete(DBConstants.tableSetting);
+  }
+
+  /// CHECK EXIST
+  Future<bool> hasSetting(String key) async {
+    final database = await db;
+
+    final result = await database.query(
+      DBConstants.tableSetting,
+      columns: [DBConstants.columnName],
+      where: '${DBConstants.columnName} = ?',
+      whereArgs: [key],
+      limit: 1,
+    );
+
+    return result.isNotEmpty;
   }
 }

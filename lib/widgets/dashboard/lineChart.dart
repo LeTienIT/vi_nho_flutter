@@ -1,5 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../core/db_constants.dart';
+import '../../viewmodels/settingVM.dart';
 
 class LineChartWidget extends StatelessWidget{
   List<FlSpot> data;
@@ -11,7 +15,11 @@ class LineChartWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    if(!data.isNotEmpty) {
+
+    final settingVM = context.watch<SettingVM>();
+    final showTotalIn = (settingVM.getSync(SettingKey.showTotalIn) ?? 'true') == 'true';
+
+    if(data.isEmpty && ((data2==null||data2!.isEmpty)&&showTotalIn)) {
       return Card(
         elevation: 3,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -34,10 +42,10 @@ class LineChartWidget extends StatelessWidget{
           )
       );
     }
-    var minX = data.map((e) => e.x).reduce((a, b) => a < b ? a : b).toDouble();
-    final maxXRaw = data.map((e) => e.x).reduce((a, b) => a > b ? a : b).toInt();
-    final maxX = getSafeMaxDay(maxXRaw, DateTime.now()).toDouble();
-    final List<int> daysWithData = data.map((e) => e.x.toInt()).toList();
+    // var minX = data.map((e) => e.x).reduce((a, b) => a < b ? a : b).toDouble();
+    // final maxXRaw = data.map((e) => e.x).reduce((a, b) => a > b ? a : b).toInt();
+    // final maxX = getSafeMaxDay(maxXRaw, DateTime.now()).toDouble();
+    // final List<int> daysWithData = data.map((e) => e.x.toInt()).toList();
     final lineChartBarData = <LineChartBarData>[LineChartBarData(
       spots: data,
       isCurved: true,
@@ -57,7 +65,7 @@ class LineChartWidget extends StatelessWidget{
       belowBarData: showBelow ? BarAreaData(show: true, color: Colors.red.withValues(alpha: 0.2)) : BarAreaData(show: false),
     )];
 
-    if (data2 != null && data2!.isNotEmpty) {
+    if (data2 != null && data2!.isNotEmpty && showTotalIn) {
       lineChartBarData.add(
         LineChartBarData(
           spots: data2!,
@@ -79,6 +87,7 @@ class LineChartWidget extends StatelessWidget{
         ),
       );
     }
+
     LineChartData chartData = LineChartData(
       // minX: minX ,
       // maxX: maxX,
@@ -135,7 +144,8 @@ class LineChartWidget extends StatelessWidget{
               spacing: 16,
               children: [
                 _buildLegendItem(Colors.red, 'Chi'),
-                _buildLegendItem(Colors.green, 'Thu'),
+                if(showTotalIn)
+                  _buildLegendItem(Colors.green, 'Thu'),
               ],
             )
           ],

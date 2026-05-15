@@ -10,6 +10,7 @@ import 'package:vi_nho/viewmodels/dashboard/dashboardYearVM.dart';
 import 'package:vi_nho/viewmodels/dashboardMainVM.dart';
 import 'package:vi_nho/viewmodels/filterVM.dart';
 import 'package:vi_nho/viewmodels/planVM.dart';
+import 'package:vi_nho/viewmodels/settingVM.dart';
 import 'package:vi_nho/viewmodels/themeVM.dart';
 import 'package:vi_nho/viewmodels/transactionVM.dart';
 import 'package:vi_nho/views/aboutView.dart';
@@ -39,6 +40,7 @@ void main() async{
         ChangeNotifierProvider(create: (_) => TransactionVM()..initData()),
         ChangeNotifierProvider(create: (_) => FilterVM()),
         ChangeNotifierProvider(create: (_) => CategoryVM()..initData()),
+        ChangeNotifierProvider(create: (_) => SettingVM()..init()),
         ChangeNotifierProvider.value(value: ThemeVM()),
         ChangeNotifierProxyProvider<TransactionVM, DashboardMainViewModel>(
           create: (_) => DashboardMainViewModel(null),

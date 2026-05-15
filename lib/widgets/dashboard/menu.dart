@@ -92,7 +92,7 @@ class _Menu extends State<Menu>{
                               '/dashboard-month',
                                   (router) => false,
                               arguments:{
-                                'month' : Running.dashboardWeek > 0 ? Running.dashboardMonth : DateTime.now().month,
+                                'month' : Running.dashboardMonth > 0 ? Running.dashboardMonth : DateTime.now().month,
                                 'year' : year,
                                 'transactions' : transactionVM.listCore
                               }
@@ -143,7 +143,7 @@ class _Menu extends State<Menu>{
               ),
               ListTile(
                 leading: const Icon(Icons.settings),
-                title: const Text('Cài đặt giao diện'),
+                title: const Text('Cài đặt'),
                 onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/setting', (route) => false),
               ),
               ListTile(

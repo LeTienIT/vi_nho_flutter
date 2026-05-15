@@ -8,13 +8,14 @@ class DashboardWeekVM extends ChangeNotifier{
   int year;
   int weekNumber;
 
-  late double totalIncome;
-  late double totalExpense;
-  late double percentIn, percentEx;
-  late List<MapEntry<String, double>> topCategory;
-  late List<FlSpot> dailyChart;
-  late Map<String, double> categoryChart;
-  late List<TransactionModel> listTransactionSort;
+  double totalIncome = 0;
+  double totalExpense = 0;
+  double percentIn = 0, percentEx = 0;
+  List<MapEntry<String, double>> topCategory = [];
+  List<FlSpot> dailyChart = [];
+  List<FlSpot> dailyIncome = [];
+  Map<String, double> categoryChart = {};
+  List<TransactionModel> listTransactionSort = [];
   double averageIn = 0;
   double averageEx  = 0;
   DashboardWeekVM({required this.listTransaction, required this.weekNumber, required this.year}){
@@ -31,7 +32,7 @@ class DashboardWeekVM extends ChangeNotifier{
 
   void _initData(){
     totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0;averageIn = 0; averageEx = 0;
-    topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
+    topCategory.clear(); dailyChart.clear(); categoryChart.clear(); listTransactionSort.clear();dailyIncome.clear();
     int tongGiaoDichChi = 0;
     final dailyMap = <int, double>{};
     final condition = Tool.getWeekRange(year, weekNumber);
@@ -40,6 +41,8 @@ class DashboardWeekVM extends ChangeNotifier{
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
         totalIncome+=t.amount;
+        final day = t.dateTime.day;
+        dailyIncome.add(FlSpot(day.toDouble(), t.amount));
       }else{
         tongGiaoDichChi++;
         totalExpense+=t.amount;
@@ -47,15 +50,17 @@ class DashboardWeekVM extends ChangeNotifier{
         dailyMap[t.dateTime.day] = (dailyMap[t.dateTime.day] ?? 0 ) + t.amount;
       }
     }
+    dailyIncome.sort( (a,b) => a.x.compareTo(b.x) );
+
     topCategory = categoryChart.entries.toList()..sort((a,b) => b.value.compareTo(a.value));
-    topCategory = topCategory.take(5).toList();
+    topCategory = topCategory.take(20).toList();
 
     final dailySort = dailyMap.keys.toList()..sort();
     dailyChart = dailySort.map((d) => FlSpot(d.toDouble(), dailyMap[d]!)).toList();
 
     listTransactionSort = listTransactionWeek..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransactionSort = listTransactionSort.take(5).toList();
+    listTransactionSort = listTransactionSort.take(20).toList();
 
     if(weekNumber > 1){
       averageIn = totalIncome / 7;

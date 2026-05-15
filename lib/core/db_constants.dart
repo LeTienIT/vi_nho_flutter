@@ -5,6 +5,7 @@ class DBConstants{
   static const String tableTransaction = 'transactions';
   static const String tableCategory = "category";
   static const String tableSaving = "saving";
+  static const String tableSetting = "setting";
 
   static const String columnId = 'id';
   static const String columnType = 'type';
@@ -26,4 +27,11 @@ class DBConstants{
   static const String columnTienChuKy = 'tienMoiKy';
   static const String columnHoanThanh = 'hoanThanh';
   static const String columnThanhCong = 'thanhCong';
+
+  static const String columnData = 'data';
+}
+
+class SettingKey {
+  static const showChartTitle = "show_chart_title";
+  static const showTotalIn = "show_total_in";
 }

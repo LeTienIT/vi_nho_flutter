@@ -10,7 +10,9 @@ import 'package:vi_nho/widgets/dashboard/pieChart.dart';
 import 'package:vi_nho/widgets/dashboard/summaryCard.dart';
 import 'package:vi_nho/widgets/dashboard/topCategory.dart';
 import '../core/const_running.dart';
+import '../core/db_constants.dart';
 import '../viewmodels/categoryVM.dart';
+import '../viewmodels/settingVM.dart';
 import '../widgets/welcomePopup.dart';
 
 class DashboardMainView extends StatefulWidget{
@@ -36,6 +38,10 @@ class _DashboardMainView extends State<DashboardMainView> {
     final transactionVM = context.watch<TransactionVM>();
     final categoryVM = context.watch<CategoryVM>();
     final vm = context.watch<DashboardMainViewModel>();
+
+    final settingVM = context.watch<SettingVM>();
+    final showTitle = (settingVM.getSync(SettingKey.showChartTitle) ?? 'true') == 'true';
+
     if(!transactionVM.isLoad){
       return Center(child: CircularProgressIndicator());
     }
@@ -74,9 +80,9 @@ class _DashboardMainView extends State<DashboardMainView> {
                   noZero: true,
                 ),
                 SizedBox(height: 10),
-                PieChartWidget(vm.categoryChart,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: false,),
+                PieChartWidget(vm.categoryChart,tieuDeBD: 'Biểu đồ phân loại chi tiêu',showTitle: showTitle,),
                 SizedBox(height: 10),
-                LineChartWidget(vm.dailyChart, tieuDe: 'Biểu đồ chi tiêu theo ngày',),
+                LineChartWidget(vm.dailyChart, data2: vm.dailyChartIn, tieuDe: 'Biểu đồ chi tiêu theo ngày',),
                 SizedBox(height: 10,),
                 TopCategory(vm.topCategory),
               ],
@@ -84,7 +90,7 @@ class _DashboardMainView extends State<DashboardMainView> {
           ),
         ),
         drawer: Drawer(child: Menu(),),
-          floatingActionButton: SpeedDial(
+        floatingActionButton: SpeedDial(
             icon: Icons.add,
             activeIcon: Icons.close,
             spacing: 10,

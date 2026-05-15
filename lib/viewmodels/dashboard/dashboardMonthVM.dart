@@ -16,6 +16,7 @@ class DashboardMonthVM extends ChangeNotifier{
   late double percentIn, percentEx;
 
   Map<String, double> categoryExpenseMap = {}; // PieChart
+  List<FlSpot> dailyIncome = [];
   List<FlSpot> dailyExpenseSpots = []; // LineChart
   List<MapEntry<String, double>> topCategories = [];
   List<TransactionModel> listTransactionSort = [];
@@ -26,16 +27,18 @@ class DashboardMonthVM extends ChangeNotifier{
 
   void _initData(){
     totalIncome = 0;totalExpense = 0;percentEx = 0.0; percentIn = 0.0; averageIn = 0; averageEx = 0;
-    categoryExpenseMap.clear();dailyExpenseSpots.clear();topCategories.clear();listTransactionSort.clear();
+    categoryExpenseMap.clear();dailyExpenseSpots.clear();topCategories.clear();listTransactionSort.clear();dailyIncome.clear();
     int tongGiaoDichChi = 0;
     final currentList = listTransaction.where((t) => t.dateTime.month == monthNumber && t.dateTime.year == year).toList();
     listTransactionSort = currentList..sort((a,b) => b.amount.compareTo(a.amount));
     listTransactionSort = listTransactionSort.where((t) => t.type != 'Thu').toList();
-    listTransactionSort = listTransactionSort.take(5).toList();
+    listTransactionSort = listTransactionSort.take(20).toList();
     final dailyMap = <int, double>{};
     for(var tx in currentList){
       if (tx.type == 'Thu') {
         totalIncome += tx.amount;
+        int day = tx.dateTime.day;
+        dailyIncome.add(FlSpot(day.toDouble(), tx.amount));
       } else {
         tongGiaoDichChi++;
         totalExpense += tx.amount;
@@ -47,6 +50,9 @@ class DashboardMonthVM extends ChangeNotifier{
         dailyMap[day] = (dailyMap[day] ?? 0) + tx.amount;
       }
     }
+    
+    dailyIncome.sort( (a,b) => a.x.compareTo(b.x) );
+    
     averageIn = totalIncome / DateTime(year,monthNumber+1,0).day;
     if(tongGiaoDichChi > 0) {
       averageEx = totalExpense / tongGiaoDichChi;
@@ -58,8 +64,8 @@ class DashboardMonthVM extends ChangeNotifier{
         .toList();
 
     // Top category
-    topCategories = categoryExpenseMap.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    topCategories = categoryExpenseMap.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
+    topCategories = topCategories.take(20).toList();
 
     if(monthNumber > 1){
       double totalIncomeLast = 0.0, totalExpenseLast = 0.0;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/db_constants.dart';
+import '../viewmodels/settingVM.dart';
 import '../viewmodels/themeVM.dart';
 import '../widgets/dashboard/menu.dart';
 
@@ -35,8 +37,52 @@ class _SettingView extends State<SettingView>{
                   onChanged: (bool value){
                     ThemeVM().setTheme(value);
                   },
-                  activeColor: Theme.of(context).colorScheme.primary,
+                  activeThumbColor: Theme.of(context).colorScheme.primary,
                   inactiveTrackColor: Theme.of(context).colorScheme.surfaceContainerHighest
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 28),
+                child: Builder(
+                  builder: (context) {
+                    final settingVM = context.watch<SettingVM>();
+
+                    final showTitle = (settingVM.getSync(SettingKey.showChartTitle) ?? 'true') == 'true';
+
+                    return SwitchListTile(
+                      title: Text('Hiển thị % trong biểu đồ'),
+                      value: showTitle,
+                      onChanged: (bool value) {
+                        context.read<SettingVM>().setBool(SettingKey.showChartTitle, value);
+                      },
+                      activeThumbColor: Theme.of(context).colorScheme.primary,
+                      inactiveTrackColor: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest,
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 28),
+                child: Builder(
+                  builder: (context) {
+                    final settingVM = context.watch<SettingVM>();
+
+                    final showTotalIn = (settingVM.getSync(SettingKey.showTotalIn) ?? 'true') == 'true';
+
+                    return SwitchListTile(
+                      title: Text('Hiển thị đường thu trong biểu đồ'),
+                      value: showTotalIn,
+                      onChanged: (bool value) {
+                        context.read<SettingVM>().setBool(SettingKey.showTotalIn, value);
+                      },
+                      activeThumbColor: Theme.of(context).colorScheme.primary,
+                      inactiveTrackColor: Theme.of(context)
+                          .colorScheme
+                          .surfaceContainerHighest,
+                    );
+                  },
                 ),
               ),
             ],

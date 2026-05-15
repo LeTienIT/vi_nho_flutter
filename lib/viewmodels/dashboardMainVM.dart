@@ -52,6 +52,7 @@ class DashboardMainViewModel extends ChangeNotifier{
   late double percentIn, percentEx;
   Map<String, double> categoryChart = {};
   List<FlSpot> dailyChart = [];
+  List<FlSpot> dailyChartIn = [];
   List<MapEntry<String, double>> topCategory = [];
   late List<TransactionModel> listTransactionSort;
 
@@ -64,7 +65,7 @@ class DashboardMainViewModel extends ChangeNotifier{
     if (listTransaction == null) return;
 
     totalIncome = 0.0; totalExpense = 0.0; percentEx = 0.0; percentIn = 0.0; averageIn = 0; averageEx = 0;
-    topCategory = []; dailyChart = []; categoryChart = {}; listTransactionSort = [];
+    topCategory = []; dailyChart = []; dailyChartIn = []; categoryChart = {}; listTransactionSort = [];
 
     int tongGiaoDichChi = 0;
     final dailyMap = <int, double>{};
@@ -76,6 +77,7 @@ class DashboardMainViewModel extends ChangeNotifier{
     for(var t in listTransactionWeek){
       if(t.type == 'Thu'){
         totalIncome+=t.amount;
+        dailyChartIn.add(FlSpot(t.dateTime.day.toDouble(), t.amount));
       }else{
         tongGiaoDichChi++;
         totalExpense+=t.amount;
@@ -83,8 +85,10 @@ class DashboardMainViewModel extends ChangeNotifier{
         dailyMap[t.dateTime.day] = (dailyMap[t.dateTime.day] ?? 0 ) + t.amount;
       }
     }
+    dailyChartIn.sort( (a,b) => a.x.compareTo(b.x) );
+
     topCategory = categoryChart.entries.toList()..sort((a,b) => b.value.compareTo(a.value));
-    topCategory = topCategory.take(5).toList();
+    topCategory = topCategory.take(20).toList();
 
     final dailySort = dailyMap.keys.toList()..sort();
     dailyChart = dailySort.map((d) => FlSpot(d.toDouble(), dailyMap[d]!)).toList();
